@@ -1,0 +1,272 @@
+import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:input_data_to_excel/views/HomePage.dart';
+import 'package:input_data_to_excel/widgets/OptionTileWidget.dart';
+
+import 'CourseSubmitPage.dart';
+
+List<int> myAnswerList;
+
+class CourseRoom extends StatefulWidget {
+  final event;
+
+  CourseRoom(this.event);
+  @override
+  _CourseRoomState createState() => _CourseRoomState();
+}
+
+class _CourseRoomState extends State<CourseRoom> {
+  final totalLength = 50;
+
+  @override
+  void initState() {
+    super.initState();
+    // 저장되어 있던 답안지 있으면 불러오기
+
+    // 없으면 새로 생성
+    myAnswerList = List.generate(totalLength, (index) => null); // 50개 답안지 생성
+  }
+  @override
+  Widget build(BuildContext context) {
+    return SafeArea(
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text('${widget.event.courseName}-${widget.event.courseNumber}\n${widget.event.courseGrade}', style: TextStyle(color: Colors.blueGrey, fontSize: 15, fontWeight: FontWeight.bold)),
+          centerTitle: false,
+          backgroundColor: Colors.white,
+          elevation: 0.0,
+          iconTheme: IconThemeData.fallback(), // 뒤로 가기
+          actions: [
+            Padding(
+              padding: const EdgeInsets.fromLTRB(0, 6, 3, 6),
+              child: FlatButton(color: Colors.blueGrey, onPressed:() {}, child: Text('저장', style: TextStyle(fontSize: 18, color: Colors.white))),
+            ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(3, 6, 6, 6),
+              child: FlatButton(color: Colors.blueAccent, onPressed:() => checkSubmitPopup(), child: Text('제출', style: TextStyle(fontSize: 18, color: Colors.white))),
+            ),
+          ],
+        ),
+        body: answerList(),
+      )
+    );
+  }
+
+  // back 버튼 클릭시 종료할건지 물어보는
+  Future<bool> _onBackPressed() {
+    return showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text("홈으로 이동하시겠습니까?"),
+        actions: <Widget>[
+          FlatButton(
+            child: Text(
+              "저장하고 이동",
+              style: TextStyle(fontSize: 20, color: Colors.blueAccent),
+            ),
+            onPressed: () {
+              setState(() {
+                // isViewAnswer = false;
+              });
+              Navigator.pop(context, true);
+            },
+          ),
+          FlatButton(
+            child: Text(
+              "아니요",
+              style: TextStyle(fontSize: 18, color: Colors.grey),
+            ),
+            onPressed: () => Navigator.pop(context, false),
+          ),
+        ],
+      ),
+    ) ??
+        false;
+  }
+
+  answerList() {
+    return Container(
+        child: Scrollbar(
+          thickness: 15,
+          // 문제 리스트에 스크롤 보이게
+          child: ListView(
+            shrinkWrap: true,
+            children: <Widget>[
+              // The getter 'documents' was called on null. 오류 남
+              ListView.builder(
+                primary: true,
+                padding: EdgeInsets.symmetric(horizontal: 24),
+                shrinkWrap: true,
+                // 'visible' was called on null 방지
+                physics: ClampingScrollPhysics(),
+                // 'visible' was called on null 방지
+                itemCount: 50,
+                itemBuilder: (context, index) {
+                  return AnswerTile(
+                      index: index);
+                },
+              ),
+            ],
+          ),
+        ));
+  }
+
+  checkSubmitPopup() async {
+    await showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('과제 제출'),
+            content: Text("한 번 제출하면 다시 제출할 수 없습니다. 제출하시겠습니까?"),
+            actions: [
+              FlatButton(
+                child: Container(
+                  padding: const EdgeInsets.all(16),
+                  child: Text('확인',
+                      style: GoogleFonts.montserrat(
+                          color: Colors.blueAccent, fontSize: 20)),
+                ),
+                onPressed: () {
+                  _submit();
+                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => CourseSubmitPage()));
+                },
+              ),
+              FlatButton(
+                child: Container(
+                  padding: const EdgeInsets.all(16),
+                  child: Text('취소',
+                      style: GoogleFonts.montserrat(
+                          color: Colors.grey, fontSize: 20)),
+                ),
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+              ),
+            ],
+          );
+        });
+  }
+
+  void _submit() {
+    courseReference.doc(widget.event.id).collection("SubmitUsers").doc(currentUser.id).set({
+      "id": currentUser.id,
+      "answer": myAnswerList,
+      "createdAt": DateTime.now(),
+    });
+  }
+}
+
+class AnswerTile extends StatefulWidget {
+  final int index;
+
+  AnswerTile({this.index});
+  @override
+  _AnswerTileState createState() => _AnswerTileState();
+}
+
+class _AnswerTileState extends State<AnswerTile> {
+  String optionSelected = "";
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 50,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            Flexible(
+              flex: 4,
+              child: Container(
+                width: 50,
+                child: Text(
+                  "${widget.index + 1}. ",
+                  style: TextStyle(
+                      fontSize: 25,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.black),
+                ),
+              ),
+            ),
+            // String option, description, correctAnswer, optionSelected
+            Flexible(
+              flex: 1,
+              child: GestureDetector(
+                onTap: () {
+                    setState(() {
+                      optionSelected = "1";
+                      myAnswerList[widget.index] = int.parse(optionSelected); // 정답지에 답 체크
+                    });
+                  // }
+                },
+                child: OptionTile(
+                  option: "1",
+                  optionSelected: optionSelected,
+                ),
+              ),
+            ),
+            Flexible(
+              flex: 1,
+              child: GestureDetector(
+                onTap: () {
+                    setState(() {
+                      optionSelected = "2";
+                      myAnswerList[widget.index] = int.parse(optionSelected); // 정답지에 답 체크
+                    });
+                },
+                child: OptionTile(
+                  option: "2",
+                  optionSelected: optionSelected,
+                ),
+              ),
+            ),
+            Flexible(
+              flex: 1,
+              child: GestureDetector(
+                onTap: () {
+                    setState(() {
+                      optionSelected = "3";
+                      myAnswerList[widget.index] = int.parse(optionSelected); // 정답지에 답 체크
+                    });
+                },
+                child: OptionTile(
+                  option: "3",
+                  optionSelected: optionSelected,
+                ),
+              ),
+            ),
+            Flexible(
+              flex: 1,
+              child: GestureDetector(
+                onTap: () {
+                    setState(() {
+                      optionSelected = "4";
+                      myAnswerList[widget.index] = int.parse(optionSelected); // 정답지에 답 체크
+                    });
+                  // }
+                },
+                child: OptionTile(
+                  option: "4",
+                  optionSelected: optionSelected,
+                ),
+              ),
+            ),
+            Flexible(
+              flex: 1,
+              child: GestureDetector(
+                onTap: () {
+                    setState(() {
+                      optionSelected = "5";
+                      myAnswerList[widget.index] = int.parse(optionSelected); // 정답지에 답 체크
+                    });
+                  // }
+                },
+                child: OptionTile(
+                  option: "5",
+                  optionSelected: optionSelected,
+                ),
+              ),
+            ),
+          ],
+        ));
+  }
+}
