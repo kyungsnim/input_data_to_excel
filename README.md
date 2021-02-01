@@ -1,16 +1,16 @@
-# input_data_to_excel
+# 조지형 국어학원 과제관리 앱 요구사항 및 진척도
 
-A new Flutter application.
+## 1. 요구사항
+### -
 
-## Getting Started
+## 2. 진척도
+### - 로그인 화면 구성 (수험번호/비밀번호 로그인)
+### - 과제 일정 캘린더 탭
+### - 과제 클릭 후 문제 푸는 화면
+### - 내 정보 (학년 등) 수정 화면
 
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
-
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## 3. Todo list (kyungsnim)
+### - 과제 제출했는데 다시 해당과제 들어가려고 할 때 어떻게 할건가?
+### - 중간 저장버튼 만들 것인지, 제출시 제출하면 다시 제출 불가능하다는 것 만들 것인지?
+### - 엑셀 일괄 업로드 기능 넣을 것인지?
+### -
