@@ -5,7 +5,8 @@ import 'package:input_data_to_excel/widgets/OptionTileWidget.dart';
 
 import 'CourseSubmitPage.dart';
 
-List<int> myAnswerList;
+List<dynamic> myAnswerList;
+// var checked;
 
 class CourseRoom extends StatefulWidget {
   final event;
@@ -21,9 +22,7 @@ class _CourseRoomState extends State<CourseRoom> {
   @override
   void initState() {
     super.initState();
-    // 저장되어 있던 답안지 있으면 불러오기
-
-    // 없으면 새로 생성
+    // checked = 0;
     myAnswerList = List.generate(totalLength, (index) => null); // 50개 답안지 생성
   }
   @override
@@ -35,14 +34,11 @@ class _CourseRoomState extends State<CourseRoom> {
           centerTitle: false,
           backgroundColor: Colors.white,
           elevation: 0.0,
-          iconTheme: IconThemeData.fallback(), // 뒤로 가기
+          // iconTheme: IconThemeData.fallback(), // 뒤로 가기
+          leading: InkWell(onTap: () => _onBackPressed(), child: Icon(Icons.arrow_back_ios_outlined, color: Colors.blueGrey,)),
           actions: [
             Padding(
-              padding: const EdgeInsets.fromLTRB(0, 6, 3, 6),
-              child: FlatButton(color: Colors.blueGrey, onPressed:() {}, child: Text('저장', style: TextStyle(fontSize: 18, color: Colors.white))),
-            ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(3, 6, 6, 6),
+              padding: const EdgeInsets.fromLTRB(3, 6, 26, 6),
               child: FlatButton(color: Colors.blueAccent, onPressed:() => checkSubmitPopup(), child: Text('제출', style: TextStyle(fontSize: 18, color: Colors.white))),
             ),
           ],
@@ -57,26 +53,30 @@ class _CourseRoomState extends State<CourseRoom> {
     return showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text("홈으로 이동하시겠습니까?"),
+        title: Text("홈으로 이동"),
+        content: Text("이동하시겠습니까? 입력된 자료는 저장되지 않습니다."),
         actions: <Widget>[
           FlatButton(
-            child: Text(
-              "저장하고 이동",
-              style: TextStyle(fontSize: 20, color: Colors.blueAccent),
+            child: Container(
+              padding: const EdgeInsets.all(16),
+              child: Text('확인',
+                  style: GoogleFonts.montserrat(
+                      color: Colors.blueAccent, fontSize: 20)),
             ),
             onPressed: () {
-              setState(() {
-                // isViewAnswer = false;
-              });
-              Navigator.pop(context, true);
+              Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => HomePage(0)));
             },
           ),
           FlatButton(
-            child: Text(
-              "아니요",
-              style: TextStyle(fontSize: 18, color: Colors.grey),
+            child: Container(
+              padding: const EdgeInsets.all(16),
+              child: Text('취소',
+                  style: GoogleFonts.montserrat(
+                      color: Colors.grey, fontSize: 20)),
             ),
-            onPressed: () => Navigator.pop(context, false),
+            onPressed: () {
+              Navigator.pop(context);
+            },
           ),
         ],
       ),
@@ -103,7 +103,8 @@ class _CourseRoomState extends State<CourseRoom> {
                 itemCount: 50,
                 itemBuilder: (context, index) {
                   return AnswerTile(
-                      index: index);
+                      index: index,
+                  );
                 },
               ),
             ],
@@ -128,7 +129,7 @@ class _CourseRoomState extends State<CourseRoom> {
                 ),
                 onPressed: () {
                   _submit();
-                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => CourseSubmitPage()));
+                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => HomePage(0)));
                 },
               ),
               FlatButton(
@@ -158,7 +159,6 @@ class _CourseRoomState extends State<CourseRoom> {
 
 class AnswerTile extends StatefulWidget {
   final int index;
-
   AnswerTile({this.index});
   @override
   _AnswerTileState createState() => _AnswerTileState();
@@ -195,6 +195,7 @@ class _AnswerTileState extends State<AnswerTile> {
                     setState(() {
                       optionSelected = "1";
                       myAnswerList[widget.index] = int.parse(optionSelected); // 정답지에 답 체크
+                      // checked++;
                     });
                   // }
                 },
@@ -211,6 +212,7 @@ class _AnswerTileState extends State<AnswerTile> {
                     setState(() {
                       optionSelected = "2";
                       myAnswerList[widget.index] = int.parse(optionSelected); // 정답지에 답 체크
+                      // checked++;
                     });
                 },
                 child: OptionTile(
@@ -226,6 +228,7 @@ class _AnswerTileState extends State<AnswerTile> {
                     setState(() {
                       optionSelected = "3";
                       myAnswerList[widget.index] = int.parse(optionSelected); // 정답지에 답 체크
+                      // checked++;
                     });
                 },
                 child: OptionTile(
@@ -241,6 +244,7 @@ class _AnswerTileState extends State<AnswerTile> {
                     setState(() {
                       optionSelected = "4";
                       myAnswerList[widget.index] = int.parse(optionSelected); // 정답지에 답 체크
+                      // checked++;
                     });
                   // }
                 },
@@ -257,6 +261,7 @@ class _AnswerTileState extends State<AnswerTile> {
                     setState(() {
                       optionSelected = "5";
                       myAnswerList[widget.index] = int.parse(optionSelected); // 정답지에 답 체크
+                      // checked++;
                     });
                   // }
                 },

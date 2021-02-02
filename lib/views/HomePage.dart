@@ -122,26 +122,25 @@ class _HomePageState extends State<HomePage> {
     return showDialog(
           context: context,
           builder: (context) => AlertDialog(
-            title: Text("Would you like to exit?",
-                    style: GoogleFonts.montserrat(fontSize: 18))
-                .tr(),
+            title: Text("종료하시겠습니까?",
+                    style: GoogleFonts.montserrat(fontSize: 18)),
             actions: <Widget>[
               FlatButton(
                 child: Text(
-                  "Yes",
+                  "확인",
                   style:
-                      GoogleFonts.montserrat(fontSize: 15, color: Colors.blue),
-                ).tr(),
+                      GoogleFonts.montserrat(fontSize: 18, color: Colors.blue),
+                ),
                 onPressed: () {
                   SystemNavigator.pop();
                 },
               ),
               FlatButton(
                 child: Text(
-                  "No",
+                  "취소",
                   style:
-                      GoogleFonts.montserrat(fontSize: 15, color: Colors.grey),
-                ).tr(),
+                      GoogleFonts.montserrat(fontSize: 18, color: Colors.grey),
+                ),
                 onPressed: () => Navigator.pop(context, false),
               ),
             ],

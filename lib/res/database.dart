@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:date_format/date_format.dart';
+import 'package:input_data_to_excel/views/HomePage.dart';
 
 class DatabaseService {
 
@@ -82,6 +83,13 @@ class DatabaseService {
         .collection("users")
         .where('profileName', isEqualTo: username)
         .orderBy('level')
+        .snapshots();
+  }
+
+  // 승인안된 유저목록 가져오기
+  getUserInfoListByNotValidate() async {
+    return userReference.where('validateByAdmin', isEqualTo: false)
+        .orderBy('grade')
         .snapshots();
   }
   // 이름검색 유저목록 가져오기

@@ -4,14 +4,9 @@ import 'package:input_data_to_excel/widgets/LoginButton.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-SignUpPageWithUserIdState pageState;
-
 class SignUpPageWithUserId extends StatefulWidget {
   @override
-  SignUpPageWithUserIdState createState() {
-    pageState = SignUpPageWithUserIdState();
-    return pageState;
-  }
+  SignUpPageWithUserIdState createState() => SignUpPageWithUserIdState();
 }
 
 class SignUpPageWithUserIdState extends State<SignUpPageWithUserId> {
@@ -101,7 +96,7 @@ class SignUpPageWithUserIdState extends State<SignUpPageWithUserId> {
                                   ]
                               ),
                               width: MediaQuery.of(context).size.width * 0.8,
-                              height: MediaQuery.of(context).size.height * 0.05,
+                              height: MediaQuery.of(context).size.height * 0.08,
                               child: Padding(
                                 padding: const EdgeInsets.symmetric(horizontal: 10),
                                 child: TextFormField(
@@ -137,7 +132,7 @@ class SignUpPageWithUserIdState extends State<SignUpPageWithUserId> {
                                   ]
                               ),
                               width: MediaQuery.of(context).size.width * 0.8,
-                              height: MediaQuery.of(context).size.height * 0.05,
+                              height: MediaQuery.of(context).size.height * 0.08,
                               child: Padding(
                                 padding: const EdgeInsets.symmetric(horizontal: 10),
                                 child: TextFormField(
@@ -177,7 +172,7 @@ class SignUpPageWithUserIdState extends State<SignUpPageWithUserId> {
                             ]
                         ),
                         width: MediaQuery.of(context).size.width * 0.8,
-                        height: MediaQuery.of(context).size.height * 0.05,
+                        height: MediaQuery.of(context).size.height * 0.08,
                         child: Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 10),
                           child: Row(
@@ -210,7 +205,7 @@ class SignUpPageWithUserIdState extends State<SignUpPageWithUserId> {
                           ),
                         ),
                       ),
-                      SizedBox(height: 10),
+                      SizedBox(height: MediaQuery.of(context).size.height * 0.1),
                       InkWell(
                           onTap: () {
                             FocusScope.of(context)

@@ -23,7 +23,7 @@ Widget jjhBody() {
       SizedBox(height: 20),
       Center(
         child: Text(
-          '답안제출 앱',
+          '과제제출 앱',
           style: GoogleFonts.montserrat(
               fontSize: 35,
               color: Colors.white,
