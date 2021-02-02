@@ -2,7 +2,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:input_data_to_excel/models/CurrentUser.dart';
 import 'package:input_data_to_excel/res/database.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:input_data_to_excel/LoginPage/SignUpPageWithUserId.dart';
@@ -22,7 +21,6 @@ class SignInPageWithUserIdState extends State<SignInPageWithUserId> {
   TextEditingController _passwordController = TextEditingController();
   String userId, password, resetPwEmail;
   bool doRemember = false;
-  FirebaseMessaging _fcm = FirebaseMessaging();
   var isLoading;
   final _formKey = GlobalKey<FormState>();
   final _scaffoldKey = GlobalKey<ScaffoldState>();
@@ -146,7 +144,7 @@ class SignInPageWithUserIdState extends State<SignInPageWithUserId> {
                                 color: Colors.white24)
                           ]),
                       width: MediaQuery.of(context).size.width * 0.8,
-                      height: MediaQuery.of(context).size.height * 0.08,
+                      height: MediaQuery.of(context).size.height * 0.07,
                       child: Padding(
                         padding: const EdgeInsets.all(10.0),
                         child: TextFormField(
@@ -185,7 +183,7 @@ class SignInPageWithUserIdState extends State<SignInPageWithUserId> {
                                 color: Colors.white24)
                           ]),
                       width: MediaQuery.of(context).size.width * 0.8,
-                      height: MediaQuery.of(context).size.height * 0.08,
+                      height: MediaQuery.of(context).size.height * 0.07,
                       child: Padding(
                         padding: const EdgeInsets.all(10.0),
                         child: TextFormField(
@@ -215,14 +213,18 @@ class SignInPageWithUserIdState extends State<SignInPageWithUserId> {
                         margin: const EdgeInsets.fromLTRB(25, 5, 25, 5),
                         child: Row(
                           children: <Widget>[
-                            Checkbox(
-                              activeColor: Colors.blue,
-                              value: doRemember,
-                              onChanged: (newValue) {
-                                setState(() {
-                                  doRemember = newValue;
-                                });
-                              },
+                            // checkbox 체크안했을 때 색상 설정하기 (매우 유용하군.....)
+                            Theme(
+                              data: ThemeData(unselectedWidgetColor: Colors.white),
+                              child: Checkbox(
+                                activeColor: Colors.blue,
+                                value: doRemember,
+                                onChanged: (newValue) {
+                                  setState(() {
+                                    doRemember = newValue;
+                                  });
+                                },
+                              ),
                             ),
                             Text('수험번호 기억하기',
                                 style: TextStyle(color: Colors.white))
@@ -233,6 +235,8 @@ class SignInPageWithUserIdState extends State<SignInPageWithUserId> {
                     isLoading == true ? Column(
                       children: [
                         CircularProgressIndicator(
+                          valueColor: new AlwaysStoppedAnimation<Color>(Colors.blueAccent),
+                          strokeWidth: 10,
                         ),
                         SizedBox(height: MediaQuery.of(context).size.height * 0.07),
                       ],

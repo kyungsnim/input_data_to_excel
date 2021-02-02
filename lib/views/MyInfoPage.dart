@@ -1,14 +1,10 @@
 import 'package:input_data_to_excel/LoginPage/SignInPageWithUserId.dart';
 import 'package:input_data_to_excel/models/CurrentUser.dart';
 import 'package:input_data_to_excel/views/SettingUserInfoPage.dart';
-import 'package:input_data_to_excel/widgets/CllangeduAppBar.dart';
 import 'package:input_data_to_excel/widgets/ProgressWidget.dart';
-import 'package:carousel_slider/carousel_slider.dart';
-import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'EditProfilePage.dart';
 import 'HomePage.dart';
 
@@ -18,7 +14,7 @@ class MyInfoPage extends StatefulWidget {
 }
 
 class _MyInfoPageState extends State<MyInfoPage> {
-  final String currentOnlineUserId = currentUser?.id; //
+  final String currentUserId = currentUser?.id; //
   final noticePictureList = [
     'assets/images/coin.jpg',
   ];
@@ -52,7 +48,7 @@ class _MyInfoPageState extends State<MyInfoPage> {
                   ],
                 ),
               ),
-              id(user),
+              userInfo(user.id),
               Padding(
                 padding: const EdgeInsets.all(10.0),
                 child: Row(
@@ -63,7 +59,7 @@ class _MyInfoPageState extends State<MyInfoPage> {
                   ],
                 ),
               ),
-              grade(user),
+              userInfo(user.grade),
               Padding(
                 padding: const EdgeInsets.all(10.0),
                 child: Row(
@@ -74,7 +70,7 @@ class _MyInfoPageState extends State<MyInfoPage> {
                   ],
                 ),
               ),
-              createdAt(user),
+              userInfo("${user.createdAt.year}년 ${user.createdAt.month}월 ${user.createdAt.day}일"),
               SizedBox(height: 10),
               Center(
                 child: Container(
@@ -108,7 +104,7 @@ class _MyInfoPageState extends State<MyInfoPage> {
                     )),
               ),
               SizedBox(height: 10),
-              Center(
+              currentUser.role == 'admin' ? Center(
                 child: Container(
                     width: 200,
                     child: RaisedButton(
@@ -122,7 +118,7 @@ class _MyInfoPageState extends State<MyInfoPage> {
                       ),
                       onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => SettingUserInfoPage())),
                     )),
-              ),
+              ) : Container(),
               SizedBox(height: 10),
             ],
           );
@@ -162,7 +158,8 @@ class _MyInfoPageState extends State<MyInfoPage> {
               ),
             ],
           ),
-        ) : Center(child: CircularProgressIndicator()));
+        ) : Center(child: CircularProgressIndicator(valueColor: new AlwaysStoppedAnimation<Color>(Colors.blueAccent),
+          strokeWidth: 10,)));
   }
 
   signOut() async {
@@ -176,7 +173,7 @@ class _MyInfoPageState extends State<MyInfoPage> {
 
   }
 
-  id(CurrentUser user) {
+  userInfo(userInfo) {
     return Padding(
       padding: EdgeInsets.fromLTRB(10, 0, 10, 10),
       child: Container(
@@ -198,89 +195,7 @@ class _MyInfoPageState extends State<MyInfoPage> {
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: [
                               Text(
-                                currentUser.id, //user.userId,
-                                style: GoogleFonts.montserrat(
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.black,
-                                    fontSize: 15),
-                              ),
-                            ],
-                          ),
-                        ],
-                      )),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  createdAt(CurrentUser user) {
-    return Padding(
-      padding: EdgeInsets.fromLTRB(10, 0, 10, 10),
-      child: Container(
-        decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(5),
-            color: Colors.grey.withOpacity(0.2)),
-        child: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Row(
-                children: [
-                  Expanded(
-                      flex: 3,
-                      child: Column(
-                        children: [
-                          Row(
-                            // 사용자 이름
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              Text(
-                                "${currentUser.createdAt.year}년 ${currentUser.createdAt.month}월 ${currentUser.createdAt.day}일", //user.userId,
-                                style: GoogleFonts.montserrat(
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.black,
-                                    fontSize: 15),
-                              ),
-                            ],
-                          ),
-                        ],
-                      )),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  grade(CurrentUser user) {
-    return Padding(
-      padding: EdgeInsets.fromLTRB(10, 0, 10, 10),
-      child: Container(
-        decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(5),
-            color: Colors.grey.withOpacity(0.2)),
-        child: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Row(
-                children: [
-                  Expanded(
-                      flex: 3,
-                      child: Column(
-                        children: [
-                          Row(
-                            // 사용자 이름
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              Text(
-                                currentUser.grade, //user.userId,
+                                userInfo, //user.userId,
                                 style: GoogleFonts.montserrat(
                                     fontWeight: FontWeight.bold,
                                     color: Colors.black,
@@ -308,8 +223,8 @@ class _MyInfoPageState extends State<MyInfoPage> {
           title: Text('정보 수정',
               style: GoogleFonts.montserrat(
                   fontWeight: FontWeight.bold,
-                  color: Colors.blue,
-                  fontSize: 20))
+                  color: Colors.blueAccent,
+                  fontSize: 18))
               ,
           actionsPadding: EdgeInsets.only(right: 10),
           elevation: 0.0,
@@ -323,12 +238,12 @@ class _MyInfoPageState extends State<MyInfoPage> {
               height: MediaQuery
                   .of(context)
                   .size
-                  .height * 0.8,
+                  .height * 0.2,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(10),
               ),
               alignment: Alignment.center,
-              child: EditProfilePage(currentOnlineUserId: currentOnlineUserId)
+              child: EditProfilePage(currentUserId: currentUserId)
           ),
         );
       },

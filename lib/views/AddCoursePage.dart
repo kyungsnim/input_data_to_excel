@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:input_data_to_excel/models/CourseModel.dart';
-import 'package:input_data_to_excel/res/course_firestore_service.dart';
 
 import 'HomePage.dart';
 
@@ -441,7 +439,10 @@ class _AddCoursePageState extends State<AddCoursePage> {
                   )),
               const SizedBox(height: 10.0),
               processing
-                  ? Center(child: CircularProgressIndicator())
+                  ? Center(child: CircularProgressIndicator(
+                valueColor: new AlwaysStoppedAnimation<Color>(Colors.blueAccent),
+                strokeWidth: 10,
+              ),)
                   : Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 16.0),
                       child: Material(

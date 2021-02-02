@@ -1,65 +1,55 @@
 import 'dart:io';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:csv/csv.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter_mailer/flutter_mailer.dart';
 
-// import 'package:flutter_email_sender/flutter_email_sender.dart';
 import 'package:input_data_to_excel/models/CourseModel.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:path_provider/path_provider.dart';
 
-// import 'package:mailer/mailer.dart';
-// import 'package:mailer/smtp_server/gmail.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:toast/toast.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'dart:core';
-import 'dart:io' as io;
 import 'AddCoursePage.dart';
 import 'CourseRoom.dart';
 import 'HomePage.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 
 String fileName;
 File f;
+
 class CourseSubmitPage extends StatefulWidget {
   @override
   _CourseSubmitPageState createState() => _CourseSubmitPageState();
 }
 
 class _CourseSubmitPageState extends State<CourseSubmitPage> {
-  CalendarController _regularCalendarController;
-  Map<DateTime, List<dynamic>> _regularEvents = {};
-  List<dynamic> _selectedRegularEvents = [];
+  CalendarController _calendarController;
+  Map<DateTime, List<dynamic>> _events = {};
+  List<dynamic> _selectedEvents = [];
   String filePath;
   final weekDayList = ["일", "월", "화", "수", "목", "금", "토"];
 
   @override
   void dispose() {
-    _regularCalendarController.dispose();
+    _calendarController.dispose();
     super.dispose();
-  }
-
-  Future<QuerySnapshot> getDS() async {
-    return FirebaseFirestore.instance.collection('courses').get();
   }
 
   @override
   void initState() {
     super.initState();
-    _regularCalendarController = CalendarController();
+    _calendarController = CalendarController();
   }
 
-  void _onDayRegularSelected(day, events, List e) {
+  void _onDaySelected(day, events, List e) {
     setState(() {
-      _selectedRegularEvents = events;
+      _selectedEvents = events;
     });
   }
 
-  Map<DateTime, List<dynamic>> _groupRegularCourses(List<CourseModel> courses) {
+  Map<DateTime, List<dynamic>> _groupCourses(List<CourseModel> courses) {
     Map<DateTime, List<dynamic>> data = {};
     courses.forEach((course) {
       DateTime date = DateTime(course.courseDate.year, course.courseDate.month,
@@ -72,50 +62,55 @@ class _CourseSubmitPageState extends State<CourseSubmitPage> {
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () {},
-      child: Scaffold(
-          body: currentUser != null
-              ? Container(
-                  height: MediaQuery.of(context).size.height * 1,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      SizedBox(height: 20),
-                      Row(
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.all(10.0),
-                            child: Text("과제 목록",
-                                style: GoogleFonts.montserrat(
-                                    fontSize: 30, fontWeight: FontWeight.bold)),
-                          ),
-                          Spacer(),
-                        ],
-                      ),
-                      Expanded(
-                        child: regularCalendar(),
-                      )
-                    ],
-                  ),
-                )
-              : Center(child: CircularProgressIndicator()),
-          floatingActionButton: currentUser != null
-              ? FloatingActionButton(
-                  backgroundColor: Colors.blueGrey,
-                  child: Icon(Icons.add),
-                  onPressed: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => AddCoursePage()));
-                  },
-                )
-              : Center(child: CircularProgressIndicator())),
-    );
+    return Scaffold(
+        body: currentUser != null
+            ? Container(
+                height: MediaQuery.of(context).size.height * 1,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SizedBox(height: 20),
+                    Row(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.all(10.0),
+                          child: Text("과제 목록",
+                              style: GoogleFonts.montserrat(
+                                  fontSize: 30, fontWeight: FontWeight.bold)),
+                        ),
+                        Spacer(),
+                      ],
+                    ),
+                    Expanded(
+                      child: _viewCalendar(),
+                    )
+                  ],
+                ),
+              )
+            : Center(
+                child: CircularProgressIndicator(
+                valueColor:
+                    new AlwaysStoppedAnimation<Color>(Colors.blueAccent),
+                strokeWidth: 10,
+              )),
+        floatingActionButton: currentUser != null
+            ? currentUser.role == 'admin' ? FloatingActionButton(
+                backgroundColor: Colors.blueGrey,
+                child: Icon(Icons.add),
+                onPressed: () {
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => AddCoursePage()));
+                },
+              ) : Container()
+            : Center(
+                child: CircularProgressIndicator(
+                valueColor:
+                    new AlwaysStoppedAnimation<Color>(Colors.blueAccent),
+                strokeWidth: 10,
+              )));
   }
 
-  Widget regularCalendar() {
+  Widget _viewCalendar() {
     return Container(
       margin: EdgeInsets.fromLTRB(10, 0, 10, 10),
       width: double.infinity,
@@ -140,20 +135,26 @@ class _CourseSubmitPageState extends State<CourseSubmitPage> {
                       .toList()),
           builder: (context, snapshot) {
             if (!snapshot.hasData) {
-              return Center(child: CircularProgressIndicator());
+              return Center(
+                  child: CircularProgressIndicator(
+                valueColor:
+                    new AlwaysStoppedAnimation<Color>(Colors.blueAccent),
+                strokeWidth: 10,
+              ));
             } else {
               List<CourseModel> allCourses = snapshot.data;
               if (allCourses.isNotEmpty) {
-                _regularEvents = _groupRegularCourses(allCourses);
+                _events = _groupCourses(allCourses);
               }
             }
             return ListView(children: [
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _regularEvents != null
+                  _events != null
                       ? TableCalendar(
-                          events: _regularEvents,
+                          locale: 'ko_KR',
+                          events: _events,
                           initialCalendarFormat: CalendarFormat.twoWeeks,
                           calendarStyle: CalendarStyle(
                             markersColor: Colors.grey,
@@ -177,8 +178,8 @@ class _CourseSubmitPageState extends State<CourseSubmitPage> {
                                 GoogleFonts.montserrat(color: Colors.red[400]),
                             // renderDaysOfWeek: false,
                           ),
-                          onDaySelected: _onDayRegularSelected,
-                          calendarController: _regularCalendarController,
+                          onDaySelected: _onDaySelected,
+                          calendarController: _calendarController,
                           headerStyle: HeaderStyle(
                               leftChevronIcon: Icon(Icons.arrow_back_ios,
                                   size: 15, color: Colors.blueGrey),
@@ -192,7 +193,7 @@ class _CourseSubmitPageState extends State<CourseSubmitPage> {
                               centerHeaderTitle: true),
                         )
                       : LinearProgressIndicator(),
-                  ..._selectedRegularEvents.map((event) => ListTile(
+                  ..._selectedEvents.map((event) => ListTile(
                         tileColor: event.courseGrade == "중학교 1학년"
                             ? Colors.blueAccent.withOpacity(0.2)
                             : event.courseGrade == "중학교 2학년"
@@ -260,7 +261,8 @@ class _CourseSubmitPageState extends State<CourseSubmitPage> {
   }
 
   checkCoursePopup(event) async {
-    fileName = '${event.courseName}-${event.courseNumber}_${event.courseGrade}_${event.courseDate.year}년${event.courseDate.month}월${event.courseDate.day}일.csv';
+    fileName =
+        '${event.courseName}-${event.courseNumber}_${event.courseGrade}_${event.courseDate.year}년${event.courseDate.month}월${event.courseDate.day}일.csv';
     await showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -418,13 +420,9 @@ class _CourseSubmitPageState extends State<CourseSubmitPage> {
   }
 
   sendMail(event) async {
-    const GMAIL_SCHEMA = 'com.google.android.gm';
-
-    // final bool gmailinstalled =  await isAppInstalled(GMAIL_SCHEMA);
-    // final bool canSend = await canSendMail();
-
-    if(Platform.isIOS) {
-      Reference levelTestRef = FirebaseStorage.instance.ref().child('submitList/${DateTime.now().year}년/${DateTime.now().month}월/${event.courseName}-${event.courseNumber}_${event.courseGrade}_${event.courseDate.year}년${event.courseDate.month}월${event.courseDate.day}일');
+    if (Platform.isIOS) {
+      Reference levelTestRef = FirebaseStorage.instance.ref().child(
+          'submitList/${DateTime.now().year}년/${DateTime.now().month}월/${event.courseName}-${event.courseNumber}_${event.courseGrade}_${event.courseDate.year}년${event.courseDate.month}월${event.courseDate.day}일');
       // // upload Task는 제공되나 아직 실제 업로드 전
       UploadTask uploadTask = levelTestRef.putFile(f);
       // 실제 파일 업로드 (중간에 중단, 취소 등 하지 않을 것이므로 최대한 심플하게 가보자.)
@@ -432,28 +430,21 @@ class _CourseSubmitPageState extends State<CourseSubmitPage> {
     } else {
       // 이메일 전송 테스트
       final MailOptions mailOptions = MailOptions(
-        body: event.courseName + event.courseNumber + ' 과제에 대한 엑셀 취합내용 메일 전송입니다.',
+        body:
+            event.courseName + event.courseNumber + ' 과제에 대한 엑셀 취합내용 메일 전송입니다.',
         subject:
-        '${event.courseName}-${event.courseNumber}_${event.courseGrade}_${event.courseDate.year}년${event.courseDate.month}월${event.courseDate.day}일',
+            '${event.courseName}-${event.courseNumber}_${event.courseGrade}_${event.courseDate.year}년${event.courseDate.month}월${event.courseDate.day}일',
         recipients: ['skyboom86@gmail.com'],
         isHTML: false,
         // bccRecipients: ['other@example.com'],
         // ccRecipients: ['third@example.com'],
-        attachments: [ filePath, ],
+        attachments: [
+          filePath,
+        ],
       );
 
       await FlutterMailer.send(mailOptions);
     }
-    // final Uri _emailLaunchUri = Uri(
-    //   scheme: 'mailto',
-    //   path: 'skyboom86@gmail.com',
-    //   queryParameters: {
-    //     'subject' : event.courseName+event.courseNumber
-    //   },
-    //
-    // );
-    //
-    // launch(_emailLaunchUri.toString());
     Navigator.pop(context);
   }
 

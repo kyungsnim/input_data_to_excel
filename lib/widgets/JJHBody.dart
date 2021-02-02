@@ -34,16 +34,6 @@ Widget jjhBody() {
           ),
         ),
       ),
-      // Text(
-      //   'Online class',
-      //   style: GoogleFonts.montserrat(
-      //     fontSize: 20,
-      //     color: Colors.grey,
-      //     shadows: [
-      //       Shadow(offset: Offset(1, 1), blurRadius: 1, color: Colors.white)
-      //     ]
-      //   ),
-      // ),
     ],
   );
 }

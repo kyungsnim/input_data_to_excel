@@ -22,8 +22,9 @@ class SignUpPageWithUserIdState extends State<SignUpPageWithUserId> {
   @override
   void initState() {
     super.initState();
-    // ignore: unnecessary_statements
-    grade == null ? "중학교 1학년" : grade;
+    setState(() {
+      // grade = "중학교 1학년";
+    });
   }
 
   @override
@@ -96,7 +97,7 @@ class SignUpPageWithUserIdState extends State<SignUpPageWithUserId> {
                                   ]
                               ),
                               width: MediaQuery.of(context).size.width * 0.8,
-                              height: MediaQuery.of(context).size.height * 0.08,
+                              height: MediaQuery.of(context).size.height * 0.07,
                               child: Padding(
                                 padding: const EdgeInsets.symmetric(horizontal: 10),
                                 child: TextFormField(
@@ -105,6 +106,8 @@ class SignUpPageWithUserIdState extends State<SignUpPageWithUserId> {
                                   validator: (val) {
                                     if (val.isEmpty) {
                                       return '수험번호를 입력하세요';
+                                    } else if (val.length != 6){
+                                      return '수험번호는 6자리여야 합니다.';
                                     } else {
                                       return null;
                                     }
@@ -132,7 +135,7 @@ class SignUpPageWithUserIdState extends State<SignUpPageWithUserId> {
                                   ]
                               ),
                               width: MediaQuery.of(context).size.width * 0.8,
-                              height: MediaQuery.of(context).size.height * 0.08,
+                              height: MediaQuery.of(context).size.height * 0.07,
                               child: Padding(
                                 padding: const EdgeInsets.symmetric(horizontal: 10),
                                 child: TextFormField(
@@ -172,7 +175,7 @@ class SignUpPageWithUserIdState extends State<SignUpPageWithUserId> {
                             ]
                         ),
                         width: MediaQuery.of(context).size.width * 0.8,
-                        height: MediaQuery.of(context).size.height * 0.08,
+                        height: MediaQuery.of(context).size.height * 0.07,
                         child: Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 10),
                           child: Row(
@@ -182,6 +185,7 @@ class SignUpPageWithUserIdState extends State<SignUpPageWithUserId> {
                               Expanded(
                                 flex: 1,
                                 child: DropdownButton(
+                                  hint: Text('학년 선택'),
                                     value: grade,
                                     icon: Icon(Icons.arrow_downward),
                                     underline: Container(
@@ -210,7 +214,9 @@ class SignUpPageWithUserIdState extends State<SignUpPageWithUserId> {
                           onTap: () {
                             FocusScope.of(context)
                                 .requestFocus(new FocusNode()); // 키보드 감추기
-                            signUpWithUserIdPassword();
+                            if (_formKey.currentState.validate()) {
+                              signUpWithUserIdPassword();
+                            }
                           },
                           child: userIdLoginButton(context, '회원 가입', Colors.white, Colors.green.withOpacity(0.7), Colors.green)),
                       SizedBox(height: 10),

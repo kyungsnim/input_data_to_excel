@@ -8,9 +8,6 @@ class OptionTile extends StatefulWidget {
   OptionTile({
     @required this.option,
     @required this.optionSelected,
-    // @required this.correctAnswer,
-    // @required this.description,
-    // @required this.isViewAnswer
   });
 
   @override
@@ -20,8 +17,6 @@ class OptionTile extends StatefulWidget {
 class _OptionTileState extends State<OptionTile> {
   @override
   Widget build(BuildContext context) {
-    var size = MediaQuery.of(context).size;
-
     return Container(
         decoration: BoxDecoration(
             border: Border.all(color: Colors.white10)), // 보기박스 테두리
@@ -33,14 +28,15 @@ class _OptionTileState extends State<OptionTile> {
               height: 30,
               alignment: Alignment.center,
               decoration: BoxDecoration(
+                color: widget.option == widget.optionSelected ? Colors.blueAccent : Colors.white,
                   borderRadius: BorderRadius.circular(30),
                   border: Border.all(
                       color: widget.option == widget.optionSelected ? Colors.blueAccent : Colors.black87,
-                      width: 1)),
+                      width: widget.option == widget.optionSelected ? 2 : 1)),
               child: Text("${widget.option}",
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
-                    color: widget.option == widget.optionSelected ? Colors.blueAccent : Colors.black87,
+                    color: widget.option == widget.optionSelected ? Colors.white : Colors.black87,
                     fontSize: 20
                   )),
             ),

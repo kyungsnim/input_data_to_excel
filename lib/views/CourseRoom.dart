@@ -3,10 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:input_data_to_excel/views/HomePage.dart';
 import 'package:input_data_to_excel/widgets/OptionTileWidget.dart';
 
-import 'CourseSubmitPage.dart';
-
 List<dynamic> myAnswerList;
-// var checked;
 
 class CourseRoom extends StatefulWidget {
   final event;
@@ -269,6 +266,13 @@ class _AnswerTileState extends State<AnswerTile> {
                   option: "5",
                   optionSelected: optionSelected,
                 ),
+              ),
+            ),
+            Flexible(
+              flex: 1,
+              child: Container(
+                  width: 20,
+                  color: optionSelected != "" ? Colors.green.withOpacity(0.7) : Colors.redAccent.withOpacity(0.7)
               ),
             ),
           ],

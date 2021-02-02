@@ -1,10 +1,11 @@
 import 'package:input_data_to_excel/LoginPage/SignInPageWithUserId.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/date_symbol_data_local.dart';
 
 void main() async {
   // WidgetsFlutterBinding.ensureInitialized();
 
-  runApp(MyApp());
+  initializeDateFormatting().then((_) => runApp(MyApp()));
 }
 
 class MyApp extends StatelessWidget {
@@ -16,6 +17,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         fontFamily: 'Godo',
         primarySwatch: Colors.blue,
+
       ),
       home: SignInPageWithUserId(),
     );

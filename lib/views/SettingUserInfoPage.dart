@@ -3,10 +3,7 @@ import 'package:input_data_to_excel/res/database.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:easy_localization/easy_localization.dart';
 import 'package:input_data_to_excel/views/HomePage.dart';
-
-import 'EditProfilePageByAdmin.dart';
 
 enum SelectedRadio { username, phoneNumber }
 
@@ -17,21 +14,21 @@ class SettingUserInfoPage extends StatefulWidget {
 
 class _SettingUserInfoPageState extends State<SettingUserInfoPage> {
   DatabaseService databaseService = new DatabaseService();
+
   // 유저목록
   QuerySnapshot userInfoSnapshot;
   Stream userInfoStream;
+
   // 유저 수
   var userInfoCount = 0;
   bool isLoading = false;
   TextEditingController _searchValueController = TextEditingController();
-  SelectedRadio _selectedRadio = SelectedRadio.username;
 
 // 새로고침용
   var refreshKey = GlobalKey<RefreshIndicatorState>();
 
   @override
   void initState() {
-    _selectedRadio = SelectedRadio.username;
     super.initState();
     setState(() {
       isLoading = true;
@@ -50,44 +47,52 @@ class _SettingUserInfoPageState extends State<SettingUserInfoPage> {
   viewUserInfoListStream() {
     return userInfoStream != null
         ? Container(
-        child: Scrollbar(
-            child: Column(
-              children: [
-                userInfoStream == null
-                    ? Center(child: CircularProgressIndicator())
-                    : StreamBuilder<QuerySnapshot>(
-                  stream: userInfoStream,
-                  builder: (context, stream) {
-                    if(stream.hasError) {
-                      return Center(
-                        child: Text(stream.error.toString()));
-                    }
+            child: Scrollbar(
+                child: Column(
+            children: [
+              userInfoStream == null
+                  ? Center(
+                      child: CircularProgressIndicator(
+                      valueColor:
+                          new AlwaysStoppedAnimation<Color>(Colors.blueAccent),
+                      strokeWidth: 10,
+                    ))
+                  : StreamBuilder<QuerySnapshot>(
+                      stream: userInfoStream,
+                      builder: (context, stream) {
+                        if (stream.hasError) {
+                          return Center(child: Text(stream.error.toString()));
+                        }
 
-                    QuerySnapshot querySnapshot = stream.data;
+                        QuerySnapshot querySnapshot = stream.data;
 
-                    if(!stream.hasData) {
-                      return Center(child: CircularProgressIndicator());
-                    } else {
-                      return ListView.builder(
-                        shrinkWrap: true,
-                        physics: ClampingScrollPhysics(),
-                        itemCount: querySnapshot.docs.length,
-                        itemBuilder: (context, index) {
-                          return UserInfoTile(
-                            currentUser: getUserModelFromDataSnapshot(
-                                querySnapshot.docs[index], index),
-                            index: index,
+                        if (!stream.hasData) {
+                          return Center(
+                              child: CircularProgressIndicator(
+                            valueColor: new AlwaysStoppedAnimation<Color>(
+                                Colors.blueAccent),
+                            strokeWidth: 10,
+                          ));
+                        } else {
+                          return ListView.builder(
+                            shrinkWrap: true,
+                            physics: ClampingScrollPhysics(),
+                            itemCount: querySnapshot.docs.length,
+                            itemBuilder: (context, index) {
+                              return UserInfoTile(
+                                currentUser: getUserModelFromDataSnapshot(
+                                    querySnapshot.docs[index], index),
+                                index: index,
+                              );
+                            },
                           );
-                        },
-                      );
-                    }
-                  }
-                )
-              ],
-            )))
+                        }
+                      })
+            ],
+          )))
         : Center(
-        child: Container(
-            child: Text('No Data', style: GoogleFonts.montserrat())));
+            child: Container(
+                child: Text('No Data', style: GoogleFonts.montserrat())));
   }
 
   CurrentUser getUserModelFromDataSnapshot(
@@ -109,9 +114,13 @@ class _SettingUserInfoPageState extends State<SettingUserInfoPage> {
     return SafeArea(
       child: Scaffold(
           appBar: AppBar(
+            centerTitle: false,
+              backgroundColor: Colors.white,
+              elevation: 0.0,
+              leading: InkWell(onTap: () => Navigator.pop(context), child: Icon(Icons.arrow_back_ios_outlined, color: Colors.blueGrey,)),
               title: Text(
-            'Setting User Info',
-            style: GoogleFonts.montserrat(),
+            '최초가입자 승인',
+            style: GoogleFonts.montserrat(color: Colors.blueGrey),
           )),
           body: Container(
               height: MediaQuery.of(context).size.height * 1,
@@ -138,7 +147,11 @@ class _SettingUserInfoPageState extends State<SettingUserInfoPage> {
         children: [
           Row(
             children: [
-              Text('검색어', style: TextStyle(color: Colors.blue, fontSize: 20, fontWeight: FontWeight.bold)),
+              Text('검색어',
+                  style: TextStyle(
+                      color: Colors.blue,
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold)),
               SizedBox(width: 20),
               Expanded(
                   child: TextFormField(
@@ -147,7 +160,10 @@ class _SettingUserInfoPageState extends State<SettingUserInfoPage> {
               SizedBox(width: 20),
               RaisedButton(
                 color: Colors.blue,
-                child: Text('검색', style: TextStyle(color: Colors.white),),
+                child: Text(
+                  '검색',
+                  style: TextStyle(color: Colors.white),
+                ),
                 onPressed: () {
                   setState(() {
                     isLoading = true;
@@ -181,7 +197,6 @@ class UserInfoTile extends StatefulWidget {
 }
 
 class _UserInfoTileState extends State<UserInfoTile> {
-
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -210,13 +225,12 @@ class _UserInfoTileState extends State<UserInfoTile> {
                   RaisedButton(
                       color: Colors.blue,
                       onPressed: () async {
-                        userReference.doc(widget.currentUser.id).update({
-                          'validateByAdmin' : true
-                        });
+                        userReference
+                            .doc(widget.currentUser.id)
+                            .update({'validateByAdmin': true});
                       },
                       child: Text('승인',
-                              style:
-                                  GoogleFonts.montserrat(color: Colors.white)))
+                          style: GoogleFonts.montserrat(color: Colors.white)))
                 ],
               ),
             ),
