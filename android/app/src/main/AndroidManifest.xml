@@ -9,8 +9,8 @@
         android:maxSdkVersion="18" />
     <application
         android:name="io.flutter.app.FlutterApplication"
-        android:label="input_data_to_excel"
-        android:icon="@mipmap/ic_launcher">
+        android:label="조지형\n국어학원"
+        android:icon="@mipmap/launcher_icon">
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop"

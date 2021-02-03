@@ -103,6 +103,7 @@ class SignInPageWithUserIdState extends State<SignInPageWithUserId> {
 
   @override
   Widget build(BuildContext context) {
+    var leftPaddingSize = MediaQuery.of(context).size.width * 0.1;
     return Scaffold(
       key: _scaffoldKey,
       resizeToAvoidBottomInset: false,
@@ -124,7 +125,7 @@ class SignInPageWithUserIdState extends State<SignInPageWithUserId> {
           child: Column(
             // crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              jjhBody(),
+              jjhBody(context),
               Spacer(),
               Form(
                 key: _formKey,
@@ -159,9 +160,9 @@ class SignInPageWithUserIdState extends State<SignInPageWithUserId> {
                           },
                           decoration: InputDecoration(
                               border: InputBorder.none,
-                              icon: Icon(Icons.email, color: Colors.blue),
+                              icon: Icon(Icons.perm_contact_cal, color: Colors.blue),
                               hintText: '수험번호',
-                              hintStyle: GoogleFonts.montserrat(fontSize: 15)),
+                              hintStyle: GoogleFonts.montserrat(fontSize: 18)),
                           onChanged: (val) {
                             userId = val;
                           },
@@ -201,7 +202,7 @@ class SignInPageWithUserIdState extends State<SignInPageWithUserId> {
                               border: InputBorder.none,
                               icon: Icon(Icons.vpn_key, color: Colors.blue),
                               hintText: 'password',
-                              hintStyle: GoogleFonts.montserrat(fontSize: 15)),
+                              hintStyle: GoogleFonts.montserrat(fontSize: 18)),
                           onChanged: (val) {
                             password = val;
                           },
@@ -210,9 +211,10 @@ class SignInPageWithUserIdState extends State<SignInPageWithUserId> {
                     ),
                     // Remember me
                     Container(
-                        margin: const EdgeInsets.fromLTRB(25, 5, 25, 5),
+                        margin: const EdgeInsets.fromLTRB(0, 5, 25, 5),
                         child: Row(
                           children: <Widget>[
+                            SizedBox(width: leftPaddingSize),
                             // checkbox 체크안했을 때 색상 설정하기 (매우 유용하군.....)
                             Theme(
                               data: ThemeData(unselectedWidgetColor: Colors.white),
@@ -227,7 +229,7 @@ class SignInPageWithUserIdState extends State<SignInPageWithUserId> {
                               ),
                             ),
                             Text('수험번호 기억하기',
-                                style: TextStyle(color: Colors.white))
+                                style: TextStyle(color: Colors.white, fontSize: 18))
                           ],
                         )),
                     SizedBox(height: MediaQuery.of(context).size.height * 0.1),

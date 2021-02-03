@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-Widget jjhBody() {
+Widget jjhBody(context) {
   return Column(
     mainAxisAlignment: MainAxisAlignment.center,
     crossAxisAlignment: CrossAxisAlignment.start,
@@ -11,7 +11,7 @@ Widget jjhBody() {
         child: Text(
           '조지형 국어학원',
           style: GoogleFonts.montserrat(
-            fontSize: 35,
+            fontSize: MediaQuery.of(context).size.width * 0.1,
             color: Colors.white,
             fontWeight: FontWeight.bold,
             shadows: [
@@ -25,7 +25,7 @@ Widget jjhBody() {
         child: Text(
           '과제제출 앱',
           style: GoogleFonts.montserrat(
-              fontSize: 35,
+              fontSize: MediaQuery.of(context).size.width * 0.08,
               color: Colors.white,
               fontWeight: FontWeight.bold,
               shadows: [

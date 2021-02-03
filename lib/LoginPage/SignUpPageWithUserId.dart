@@ -80,7 +80,7 @@ class SignUpPageWithUserIdState extends State<SignUpPageWithUserId> {
                 child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      jjhBody(),
+                      jjhBody(context),
                       Spacer(),
                       Form(
                         key: _formKey,
@@ -114,9 +114,9 @@ class SignUpPageWithUserIdState extends State<SignUpPageWithUserId> {
                                   },
                                   decoration: InputDecoration(
                                       border: InputBorder.none,
-                                      icon: Icon(Icons.email, color: Colors.green),
+                                      icon: Icon(Icons.perm_contact_cal, color: Colors.green),
                                       hintText: '수험번호',
-                                      hintStyle: GoogleFonts.montserrat(fontSize: 15)),
+                                      hintStyle: GoogleFonts.montserrat(fontSize: 18)),
                                   onChanged: (val) {
                                     userId = val;
                                   },
@@ -143,8 +143,8 @@ class SignUpPageWithUserIdState extends State<SignUpPageWithUserId> {
                                   obscureText: true,
                                   cursorColor: Colors.green,
                                   validator: (val) {
-                                    if (val.length < 2) {
-                                      return '2자 이상의 비밀번호를 사용하세요.';
+                                    if (val.length < 4) {
+                                      return '4자 이상의 비밀번호를 사용하세요.';
                                     } else {
                                       return val.isEmpty ? '비밀번호를 입력하세요' : null;
                                     }
@@ -153,7 +153,7 @@ class SignUpPageWithUserIdState extends State<SignUpPageWithUserId> {
                                       border: InputBorder.none,
                                       icon: Icon(Icons.vpn_key, color: Colors.green),
                                       hintText: '비밀번호',
-                                      hintStyle: GoogleFonts.montserrat(fontSize: 15)),
+                                      hintStyle: GoogleFonts.montserrat(fontSize: 18)),
                                   onChanged: (val) {
                                     password = val;
                                   },
@@ -185,7 +185,7 @@ class SignUpPageWithUserIdState extends State<SignUpPageWithUserId> {
                               Expanded(
                                 flex: 1,
                                 child: DropdownButton(
-                                  hint: Text('학년 선택'),
+                                  hint: Text('학년 선택', style: TextStyle(fontSize: 18),),
                                     value: grade,
                                     icon: Icon(Icons.arrow_downward),
                                     underline: Container(

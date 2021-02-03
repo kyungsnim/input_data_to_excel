@@ -18,7 +18,7 @@ final courseReference = FirebaseFirestore.instance.collection('courses'); // 과
 final DateTime timestamp = DateTime.now();
 CurrentUser currentUser;
 Logger logger;
-
+var fontSize;
 class HomePage extends StatefulWidget {
   final getPageIndex;
   HomePage(this.getPageIndex);
@@ -64,6 +64,7 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    fontSize = MediaQuery.of(context).size;
     return WillPopScope(
       onWillPop: _onBackPressed,
       child: SafeArea(

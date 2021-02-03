@@ -29,7 +29,7 @@ class _CourseSubmitPageState extends State<CourseSubmitPage> {
   Map<DateTime, List<dynamic>> _events = {};
   List<dynamic> _selectedEvents = [];
   String filePath;
-  final weekDayList = ["일", "월", "화", "수", "목", "금", "토"];
+  final weekDayList = ["일", "월", "화", "수", "목", "금", "토", "일"];
 
   @override
   void dispose() {
