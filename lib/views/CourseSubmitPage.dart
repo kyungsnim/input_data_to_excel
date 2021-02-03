@@ -325,6 +325,7 @@ class _CourseSubmitPageState extends State<CourseSubmitPage> {
 
     rows.add([
       "수험번호",
+      "제출차수",
       "1",
       "2",
       "3",
@@ -382,28 +383,19 @@ class _CourseSubmitPageState extends State<CourseSubmitPage> {
         List<dynamic> row = List<dynamic>();
         // 수험번호 넣기
         row.add(cloud.docs[i].data()['id']);
+        // 제출차수 넣기
+        row.add(cloud.docs[i].data()['submitDegree']);
         // 50까지 입력 답 넣기
         for (int j = 0; j < 50; j++) {
           row.add(cloud.docs[i].data()['answer'][j]);
         }
         rows.add(row);
       }
-      // for (int i = 0; i < cloud.data["collected"].length; i++) {
-      //   List<dynamic> row = List<dynamic>();
-      //   row.add(cloud.data["collected"][i]["name"]);
-      //   row.add(cloud.data["collected"][i]["gender"]);
-      //   row.add(cloud.data["collected"][i]["phone"]);
-      //   row.add(cloud.data["collected"][i]["email"]);
-      //   row.add(cloud.data["collected"][i]["age_bracket"]);
-      //   row.add(cloud.data["collected"][i]["area"]);
-      //   row.add(cloud.data["collected"][i]["assembly"]);
-      //   row.add(cloud.data["collected"][i]["meal_ticket"]);
-      //   rows.add(row);
-      // }
-
+      // 임시 파일 생성
       f = await _localFile;
-
+      // 데이터 넣은 rows를 csv 형태로 변환
       String csv = const ListToCsvConverter().convert(rows);
+      // 변환된 csv 내용 파일에 쓰기
       f.writeAsString(csv);
     }
   }
