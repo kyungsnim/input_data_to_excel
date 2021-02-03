@@ -146,8 +146,20 @@ class _CourseRoomState extends State<CourseRoom> {
   }
 
   void _submit() {
+    // 몇차수 제출기간에 냈는지 체크
+    var checkDegree;
+    var firstDueDate = DateTime(widget.event.firstDueDate.year, widget.event.firstDueDate.month, widget.event.firstDueDate.day).microsecondsSinceEpoch;
+    var secondDueDate = DateTime(widget.event.secondDueDate.year, widget.event.secondDueDate.month, widget.event.secondDueDate.day).microsecondsSinceEpoch;
+    var today = DateTime.now().microsecondsSinceEpoch;
+
+    // 오늘이 1차기간 이전이면 "1차", 1차기간 ~ 2차기간 사이면 "2차", 이외는 "3차"
+    today < firstDueDate ? checkDegree = "1차"
+        : firstDueDate < today && today < secondDueDate ? checkDegree = "2차"
+        : checkDegree = "3차";
+
     courseReference.doc(widget.event.id).collection("SubmitUsers").doc(currentUser.id).set({
       "id": currentUser.id,
+      "submitDegree": checkDegree,
       "answer": myAnswerList,
       "createdAt": DateTime.now(),
     });
