@@ -7,6 +7,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'EditProfilePage.dart';
 import 'HomePage.dart';
+import 'SettingUserGradeInfoPage.dart';
 
 class MyInfoPage extends StatefulWidget {
   @override
@@ -110,7 +111,7 @@ class _MyInfoPageState extends State<MyInfoPage> {
                     child: RaisedButton(
                       color: Colors.redAccent,
                       child: Text(
-                        '가입 승인',
+                        '가입 승인 (관리자용)',
                         style: GoogleFonts.montserrat(
                             fontSize: 15,
                             color: Colors.white,
@@ -120,6 +121,21 @@ class _MyInfoPageState extends State<MyInfoPage> {
                     )),
               ) : Container(),
               SizedBox(height: 10),
+              currentUser.role == 'admin' ? Center(
+                child: Container(
+                    width: 200,
+                    child: RaisedButton(
+                      color: Colors.teal,
+                      child: Text(
+                        '학년 일괄수정 (관리자용)',
+                        style: GoogleFonts.montserrat(
+                            fontSize: 15,
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold),
+                      ),
+                      onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => SettingUserGradeInfoPage())),
+                    )),
+              ) : Container(),
             ],
           );
         });

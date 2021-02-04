@@ -15,6 +15,8 @@ final userReference =
     FirebaseFirestore.instance.collection('users'); // 사용자 정보 저장을 위한 ref
 final courseReference = FirebaseFirestore.instance.collection('courses'); // 과제 정보 저장을 위한 ref
 
+final FirebaseFirestore firestoreReference = FirebaseFirestore.instance;
+
 final DateTime timestamp = DateTime.now();
 CurrentUser currentUser;
 Logger logger;

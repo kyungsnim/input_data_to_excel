@@ -88,6 +88,36 @@ class DatabaseService {
         .orderBy('level')
         .snapshots();
   }
+  // 모든 학년 유저 목록 가져오기
+  getUserGradeList() async {
+    return await userReference.get();
+  }
+
+  // 중학교 2학년 유저 목록 가져오기
+  getJ2List() async {
+    return userReference.where('grade', isEqualTo: '중학교 2학년')
+        .get();
+  }
+  // 중학교 3학년 유저 목록 가져오기
+  getJ3List() async {
+    return userReference.where('grade', isEqualTo: '중학교 3학년')
+        .get();
+  }
+  // 고등학교 1학년 유저 목록 가져오기
+  getG1List() async {
+    return userReference.where('grade', isEqualTo: '고등학교 1학년')
+        .get();
+  }
+  // 고등학교 2학년 유저 목록 가져오기
+  getG2List() async {
+    return userReference.where('grade', isEqualTo: '고등학교 2학년')
+        .get();
+  }
+  // 고등학교 3학년 유저 목록 가져오기
+  getG3List() async {
+    return userReference.where('grade', isEqualTo: '고등학교 3학년')
+        .get();
+  }
 
   // 승인안된 유저목록 가져오기
   getUserInfoListByNotValidate() async {
