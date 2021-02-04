@@ -81,12 +81,16 @@ class _CourseSubmitPageState extends State<CourseSubmitPage> {
                         Spacer(),
                       ],
                     ),
-                    currentUser.validateByAdmin == true ?
-                    Expanded(
-                      child: _viewCalendar(),
-                    ) : Center(
-                      child: Text('')
-                    )
+                    currentUser.validateByAdmin == true
+                        ? Expanded(
+                            child: _viewCalendar(),
+                          )
+                        : Expanded(
+                            child: Center(
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [Text('관리자 승인 후 이용 가능합니다.', style: TextStyle(fontSize: 18, color: Colors.blueGrey, fontWeight: FontWeight.bold))])),
+                          )
                   ],
                 ),
               )
@@ -97,14 +101,18 @@ class _CourseSubmitPageState extends State<CourseSubmitPage> {
                 strokeWidth: 10,
               )),
         floatingActionButton: currentUser != null
-            ? currentUser.role == 'admin' ? FloatingActionButton(
-                backgroundColor: Colors.blueGrey,
-                child: Icon(Icons.add),
-                onPressed: () {
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => AddCoursePage()));
-                },
-              ) : Container()
+            ? currentUser.role == 'admin'
+                ? FloatingActionButton(
+                    backgroundColor: Colors.blueGrey,
+                    child: Icon(Icons.add),
+                    onPressed: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => AddCoursePage()));
+                    },
+                  )
+                : Container()
             : Center(
                 child: CircularProgressIndicator(
                 valueColor:
