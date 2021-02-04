@@ -7,13 +7,17 @@ class DatabaseService {
   getUserLoginInfo(String userId) async {
     // DocumentSnapshot currentUser;
     String password = "";
-    await FirebaseFirestore.instance
-        .collection("users")
-        .doc(userId)
-        .get().then((value) {
-          // currentUser = value;
-          password = value.data()["password"];
-    });
+    try {
+      await FirebaseFirestore.instance
+          .collection("users")
+          .doc(userId)
+          .get().then((value) {
+        // currentUser = value;
+        password = value.data()["password"];
+      });
+    } catch (e) {
+      return "ID error";
+    }
     // print("password : $password");
     // return currentUser;
     return password;

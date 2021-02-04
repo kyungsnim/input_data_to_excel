@@ -87,8 +87,13 @@ class SignInPageWithUserIdState extends State<SignInPageWithUserId> {
     // dbUserData = await ds.getUserLoginInfo(userId);
     print('userId : $userId');
     dbPassword = await ds.getUserLoginInfo(userId);
-    // print('dbUserData.password : ${dbUserData.data()["password"]}');
-    if (password == dbPassword) {
+
+    // 수험번호가 잘못 입력된 경우
+    if(dbPassword == 'ID error') {
+      checkIdPasswordPopup('수험번호 확인', "수험번호가 잘못 입력되었습니다.");
+    } else if (password != dbPassword){
+      checkIdPasswordPopup('비밀번호 확인', "비밀번호가 잘못 입력되었습니다.");
+    } else {
       // 해당 정보 다시 가져오기
       dbUserData = await userReference.doc(userId).get();
       // 현재 유저정보에 값 셋팅하기
@@ -99,6 +104,34 @@ class SignInPageWithUserIdState extends State<SignInPageWithUserId> {
       Navigator.pushReplacement(
           context, MaterialPageRoute(builder: (context) => HomePage(0)));
     }
+  }
+
+  checkIdPasswordPopup(title, content) async {
+    await showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text(title),
+            content: Text(
+                content),
+            actions: [
+              FlatButton(
+                child: Container(
+                  padding: const EdgeInsets.all(16),
+                  child: Text('확인',
+                      style: GoogleFonts.montserrat(
+                          color: Colors.grey, fontSize: 20)),
+                ),
+                onPressed: () async {
+                  Navigator.pop(context);
+                  setState(() {
+                    isLoading = false;
+                  });
+                },
+              ),
+            ],
+          );
+        });
   }
 
   @override

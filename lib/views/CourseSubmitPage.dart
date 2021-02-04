@@ -81,8 +81,11 @@ class _CourseSubmitPageState extends State<CourseSubmitPage> {
                         Spacer(),
                       ],
                     ),
+                    currentUser.validateByAdmin == true ?
                     Expanded(
                       child: _viewCalendar(),
+                    ) : Center(
+                      child: Text('')
                     )
                   ],
                 ),
