@@ -306,10 +306,58 @@ class _CourseSubmitPageState extends State<CourseSubmitPage> {
                           color: Colors.blueAccent, fontSize: 20)),
                 ),
                 onPressed: () async {
+                  // 해당 과제에 대해 db에 저장한 답 있는지 체크 (있으면 팝업띄워서 삭제 후 새로 풀지확인, 아니면 그냥 풀기)
+                  courseReference.doc(event.id).collection('SubmitUsers').doc(currentUser.id).get().then((val) {
+                    if(val.exists) {
+                      checkDeletePopup(event);
+                    } else {
+                      Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => CourseRoom(event)));
+                    }
+                  });
+                },
+              ),
+              FlatButton(
+                child: Container(
+                  padding: const EdgeInsets.all(16),
+                  child: Text('취소',
+                      style: GoogleFonts.montserrat(
+                          color: Colors.grey, fontSize: 20)),
+                ),
+                onPressed: () async {
+                  Navigator.pop(context);
+                },
+              ),
+            ],
+          );
+        });
+  }
+
+  checkDeletePopup(event) async {
+    await showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('제출 완료'),
+            content: Text(
+                "이미 제출한 과제입니다. 삭제 후 다시 푸시겠습니까?", style: TextStyle(color: Colors.redAccent)),
+            actions: [
+              FlatButton(
+                child: Container(
+                  padding: const EdgeInsets.all(16),
+                  child: Text('확인',
+                      style: GoogleFonts.montserrat(
+                          color: Colors.blueAccent, fontSize: 20)),
+                ),
+                onPressed: () async {
+                  await courseReference.doc(event.id).collection('SubmitUsers').doc(currentUser.id).delete();
+                  showToast("기존 답안 삭제 완료");
                   Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => CourseRoom(event)));
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => CourseRoom(event)));
                 },
               ),
               FlatButton(
