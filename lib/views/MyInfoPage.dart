@@ -1,3 +1,4 @@
+// @dart=2.9
 import 'package:input_data_to_excel/LoginPage/SignInPageWithUserId.dart';
 import 'package:input_data_to_excel/models/CurrentUser.dart';
 import 'package:input_data_to_excel/views/SettingUserInfoPage.dart';
@@ -15,7 +16,7 @@ class MyInfoPage extends StatefulWidget {
 }
 
 class _MyInfoPageState extends State<MyInfoPage> {
-  final String currentUserId = currentUser?.id; //
+  final String currentUserId = currentUser.id; //
   final noticePictureList = [
     'assets/images/coin.jpg',
   ];

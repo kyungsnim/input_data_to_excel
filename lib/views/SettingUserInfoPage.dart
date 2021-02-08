@@ -17,7 +17,7 @@ class _SettingUserInfoPageState extends State<SettingUserInfoPage> {
 
   // 유저목록
   QuerySnapshot userInfoSnapshot;
-  Stream userInfoStream;
+  Stream<QuerySnapshot> userInfoStream;
 
   // 유저 수
   var userInfoCount = 0;
@@ -97,15 +97,14 @@ class _SettingUserInfoPageState extends State<SettingUserInfoPage> {
 
   CurrentUser getUserModelFromDataSnapshot(
       DocumentSnapshot userInfoSnapshot, int index) {
-    CurrentUser userModel = new CurrentUser();
-
-    userModel.id = userInfoSnapshot.data()['id'];
-    userModel.grade = userInfoSnapshot.data()['grade'];
-    userModel.password = userInfoSnapshot.data()['password'];
-    userModel.role = userInfoSnapshot.data()['role'];
-    userModel.validateByAdmin = userInfoSnapshot.data()['validateByAdmin'];
-    userModel.createdAt = userInfoSnapshot.data()['createdAt'].toDate();
-
+    CurrentUser userModel = new CurrentUser(
+      id: userInfoSnapshot.data()['id'],
+      grade: userInfoSnapshot.data()['grade'],
+      password: userInfoSnapshot.data()['password'],
+      role: userInfoSnapshot.data()['role'],
+      validateByAdmin: userInfoSnapshot.data()['validateByAdmin'],
+      createdAt: userInfoSnapshot.data()['createdAt'].toDate(),
+    );
     return userModel;
   }
 
@@ -114,14 +113,19 @@ class _SettingUserInfoPageState extends State<SettingUserInfoPage> {
     return SafeArea(
       child: Scaffold(
           appBar: AppBar(
-            centerTitle: false,
+              centerTitle: false,
               backgroundColor: Colors.white,
               elevation: 0.0,
-              leading: InkWell(onTap: () => Navigator.pop(context), child: Icon(Icons.arrow_back_ios_outlined, color: Colors.blueGrey,)),
+              leading: InkWell(
+                  onTap: () => Navigator.pop(context),
+                  child: Icon(
+                    Icons.arrow_back_ios_outlined,
+                    color: Colors.blueGrey,
+                  )),
               title: Text(
-            '최초가입자 승인',
-            style: GoogleFonts.montserrat(color: Colors.blueGrey),
-          )),
+                '최초가입자 승인',
+                style: GoogleFonts.montserrat(color: Colors.blueGrey),
+              )),
           body: Container(
               height: MediaQuery.of(context).size.height * 1,
               decoration: BoxDecoration(

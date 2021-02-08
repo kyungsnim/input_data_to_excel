@@ -23,8 +23,17 @@ class DatabaseService {
     return password;
   }
 
-  Future<void> addUser(Map userMap, String userId) async {
+  Future<void> addUser(Map pUserMap, String userId) async {
     // random id 부여,
+    Map<String, dynamic> userMap = {
+      "id": userId,
+      "password": pUserMap['password'],
+      "grade": pUserMap['grade'],
+      "validateByAdmin": false, // 최초 회원가입시 관리자 검증 false
+      "role": "student",
+      "createdAt": DateTime.now()
+    };
+
     await FirebaseFirestore.instance
         .collection("users")
         .doc(userId)
@@ -33,52 +42,17 @@ class DatabaseService {
       print(e.toString());
     });
   }
-
-  Future<void> addCourseByExcelUpload(Map courseMap, String courseId) async {
-    // random id 부여,
-    await FirebaseFirestore.instance
-        .collection("boards/course/courses")
-        .doc(courseId)
-        .set(courseMap)
-        .catchError((e) {
-      print(e.toString());
-    });
-  }
-
-  // 해당 강의의 Feedback을 위한 수강생 목록 가져오기
-  getUserFeedbackList(courseId) async {
-    return FirebaseFirestore.instance
-        .collection("boards/course/courses")
-        .doc(courseId)
-        .collection('users')
-        .snapshots();
-  }
-
-  // 해당 강사의 강의목록 가져오기
-  getHisOrHerCourseInfoList(username, courseDate) async {
-    return await FirebaseFirestore.instance
-        .collection("boards/course/courses")
-        .where('courseTeacher', isEqualTo: username)
-        .where('courseDate',
-            isGreaterThan: DateTime(courseDate.year, courseDate.month, 1, 00))
-        .where('courseDate',
-            isLessThan: DateTime(
-                courseDate.month == 12 ? courseDate.year + 1 : courseDate.year,
-                courseDate.month == 12 ? 1 : courseDate.month + 1,
-                1,
-                00))
-        .orderBy('courseDate')
-        .get();
-  }
-
-  // 강사목록 가져오기
-  getTeacherInfoList(username) async {
-    return await FirebaseFirestore.instance
-        .collection("users")
-        .where('profileName', isEqualTo: username)
-        .where('role', isEqualTo: 'teacher')
-        .get();
-  }
+  //
+  // Future<void> addCourseByExcelUpload(Map courseMap, String courseId) async {
+  //   // random id 부여,
+  //   await FirebaseFirestore.instance
+  //       .collection("boards/course/courses")
+  //       .doc(courseId)
+  //       .set(courseMap)
+  //       .catchError((e) {
+  //     print(e.toString());
+  //   });
+  // }
 
   // 이름검색 유저목록 가져오기
   getUserInfoList(username) async {

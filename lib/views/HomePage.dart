@@ -1,3 +1,4 @@
+// @dart=2.9
 import 'package:input_data_to_excel/models/CurrentUser.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
@@ -5,7 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import 'package:logger/logger.dart';
 
 import 'CourseSubmitPage.dart';
 import 'MyInfoPage.dart';
@@ -18,8 +18,14 @@ final courseReference = FirebaseFirestore.instance.collection('courses'); // 과
 final FirebaseFirestore firestoreReference = FirebaseFirestore.instance;
 
 final DateTime timestamp = DateTime.now();
-CurrentUser currentUser;
-Logger logger;
+CurrentUser currentUser = new CurrentUser(
+  id: "",
+  password: "",
+  grade: "",
+  validateByAdmin: false,
+  role: "",
+  createdAt: DateTime.now()
+);
 var fontSize;
 class HomePage extends StatefulWidget {
   final getPageIndex;
@@ -108,7 +114,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   // back 버튼 클릭시 종료할건지 물어보는
-  Future<bool> _onBackPressed() {
+  Future<bool> _onBackPressed() async {
     return showDialog(
           context: context,
           builder: (context) => AlertDialog(

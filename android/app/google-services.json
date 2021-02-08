@@ -1,42 +1,41 @@
 {
   "project_info": {
-    "project_number": "536460013804",
-    "project_id": "input-data-to-excel",
-    "storage_bucket": "input-data-to-excel.appspot.com"
+    "project_number": "382800887435",
+    "project_id": "jjhedu-43a8c",
+    "storage_bucket": "jjhedu-43a8c.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:536460013804:android:aaec33aeb71bb0029875c9",
+        "mobilesdk_app_id": "1:382800887435:android:8f0b16fc52fb00d755de8e",
         "android_client_info": {
           "package_name": "com.kyungsnim.input_data_to_excel"
         }
       },
       "oauth_client": [
         {
-          "client_id": "536460013804-65v02jqbbkk0h6h8m5flccdqfs0vfebh.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.kyungsnim.input_data_to_excel",
-            "certificate_hash": "c9f944ae851f6fe29b1806cc8ace143116ec77ba"
-          }
-        },
-        {
-          "client_id": "536460013804-qspfbb6h2fce954djn19tn47f7dei9u0.apps.googleusercontent.com",
+          "client_id": "382800887435-ga9jtvks73l8vet9t2stcu00p4cvsd38.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyA7ot-07tlBIQJTERlGDC2w2ipwWFThbo8"
+          "current_key": "AIzaSyD_v696O3hYzGq4QGunlK2ILDslXQwxV9U"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "536460013804-qspfbb6h2fce954djn19tn47f7dei9u0.apps.googleusercontent.com",
+              "client_id": "382800887435-ga9jtvks73l8vet9t2stcu00p4cvsd38.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "382800887435-cc9h4tops1p9m0pqr799099bojhnc9mp.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.kyungsnim.inputDataToExcel"
+              }
             }
           ]
         }

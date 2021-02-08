@@ -1,3 +1,4 @@
+// @dart=2.9
 import 'dart:io';
 
 import 'package:csv/csv.dart';
@@ -88,8 +89,14 @@ class _CourseSubmitPageState extends State<CourseSubmitPage> {
                         : Expanded(
                             child: Center(
                                 child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [Text('관리자 승인 후 이용 가능합니다.', style: TextStyle(fontSize: 18, color: Colors.blueGrey, fontWeight: FontWeight.bold))])),
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                  Text('관리자 승인 후 이용 가능합니다.',
+                                      style: TextStyle(
+                                          fontSize: 18,
+                                          color: Colors.blueGrey,
+                                          fontWeight: FontWeight.bold))
+                                ])),
                           )
                   ],
                 ),
@@ -307,8 +314,13 @@ class _CourseSubmitPageState extends State<CourseSubmitPage> {
                 ),
                 onPressed: () async {
                   // 해당 과제에 대해 db에 저장한 답 있는지 체크 (있으면 팝업띄워서 삭제 후 새로 풀지확인, 아니면 그냥 풀기)
-                  courseReference.doc(event.id).collection('SubmitUsers').doc(currentUser.id).get().then((val) {
-                    if(val.exists) {
+                  courseReference
+                      .doc(event.id)
+                      .collection('SubmitUsers')
+                      .doc(currentUser.id)
+                      .get()
+                      .then((val) {
+                    if (val.exists) {
                       checkDeletePopup(event);
                     } else {
                       Navigator.pushReplacement(
@@ -341,8 +353,8 @@ class _CourseSubmitPageState extends State<CourseSubmitPage> {
         builder: (BuildContext context) {
           return AlertDialog(
             title: Text('제출 완료'),
-            content: Text(
-                "이미 제출한 과제입니다. 삭제 후 다시 푸시겠습니까?", style: TextStyle(color: Colors.redAccent)),
+            content: Text("이미 제출한 과제입니다. 삭제 후 다시 푸시겠습니까?",
+                style: TextStyle(color: Colors.redAccent)),
             actions: [
               FlatButton(
                 child: Container(
@@ -352,12 +364,16 @@ class _CourseSubmitPageState extends State<CourseSubmitPage> {
                           color: Colors.blueAccent, fontSize: 20)),
                 ),
                 onPressed: () async {
-                  await courseReference.doc(event.id).collection('SubmitUsers').doc(currentUser.id).delete();
+                  await courseReference
+                      .doc(event.id)
+                      .collection('SubmitUsers')
+                      .doc(currentUser.id)
+                      .delete();
                   showToast("기존 답안 삭제 완료");
                   Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => CourseRoom(event)));
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => CourseRoom(event)));
                 },
               ),
               FlatButton(
@@ -446,7 +462,11 @@ class _CourseSubmitPageState extends State<CourseSubmitPage> {
         row.add(cloud.docs[i].data()['submitDegree']);
         // 50까지 입력 답 넣기
         for (int j = 0; j < 50; j++) {
-          row.add(cloud.docs[i].data()['answer'][j]);
+          if(cloud.docs[i].data()['answer'][j] == null) {
+            row.add("");
+          } else {
+            row.add(cloud.docs[i].data()['answer'][j]);
+          }
         }
         rows.add(row);
       }
@@ -471,31 +491,31 @@ class _CourseSubmitPageState extends State<CourseSubmitPage> {
   }
 
   sendMail(event) async {
-    if (Platform.isIOS) {
-      Reference levelTestRef = FirebaseStorage.instance.ref().child(
-          'submitList/${DateTime.now().year}년/${DateTime.now().month}월/${event.courseName}-${event.courseNumber}_${event.courseGrade}_${event.courseDate.year}년${event.courseDate.month}월${event.courseDate.day}일');
-      // // upload Task는 제공되나 아직 실제 업로드 전
-      UploadTask uploadTask = levelTestRef.putFile(f);
-      // 실제 파일 업로드 (중간에 중단, 취소 등 하지 않을 것이므로 최대한 심플하게 가보자.)
-      await uploadTask.whenComplete(() => showToast('파일 업로드 완료', duration: 2));
-    } else {
-      // 이메일 전송 테스트
-      final MailOptions mailOptions = MailOptions(
-        body:
-            event.courseName + event.courseNumber + ' 과제에 대한 엑셀 취합내용 메일 전송입니다.',
-        subject:
-            '${event.courseName}-${event.courseNumber}_${event.courseGrade}_${event.courseDate.year}년${event.courseDate.month}월${event.courseDate.day}일',
-        recipients: ['skyboom86@gmail.com'],
-        isHTML: false,
-        // bccRecipients: ['other@example.com'],
-        // ccRecipients: ['third@example.com'],
-        attachments: [
-          filePath,
-        ],
-      );
-
-      await FlutterMailer.send(mailOptions);
-    }
+    // if (Platform.isIOS) {
+    Reference levelTestRef = FirebaseStorage.instance.ref().child(
+        'submitList/${DateTime.now().year}년/${DateTime.now().month}월/${event.courseName}-${event.courseNumber}_${event.courseGrade}_${event.courseDate.year}년${event.courseDate.month}월${event.courseDate.day}일');
+    // // upload Task는 제공되나 아직 실제 업로드 전
+    UploadTask uploadTask = levelTestRef.putFile(f);
+    // 실제 파일 업로드 (중간에 중단, 취소 등 하지 않을 것이므로 최대한 심플하게 가보자.)
+    await uploadTask.whenComplete(() => showToast('파일 업로드 완료', duration: 2));
+    // } else {
+    //   // 이메일 전송 테스트
+    //   final MailOptions mailOptions = MailOptions(
+    //     body:
+    //         event.courseName + event.courseNumber + ' 과제에 대한 엑셀 취합내용 메일 전송입니다.',
+    //     subject:
+    //         '${event.courseName}-${event.courseNumber}_${event.courseGrade}_${event.courseDate.year}년${event.courseDate.month}월${event.courseDate.day}일',
+    //     recipients: ['skyboom86@gmail.com'],
+    //     isHTML: false,
+    //     // bccRecipients: ['other@example.com'],
+    //     // ccRecipients: ['third@example.com'],
+    //     attachments: [
+    //       filePath,
+    //     ],
+    //   );
+    //
+    //   await FlutterMailer.send(mailOptions);
+    // }
     Navigator.pop(context);
   }
 

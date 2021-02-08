@@ -6,8 +6,8 @@ class OptionTile extends StatefulWidget {
   // final bool isViewAnswer;
 
   OptionTile({
-    @required this.option,
-    @required this.optionSelected,
+    this.option,
+    this.optionSelected,
   });
 
   @override

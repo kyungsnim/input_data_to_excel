@@ -13,10 +13,10 @@ class _AddCoursePageState extends State<AddCoursePage> {
   TextEditingController _courseName;
   var _courseNumber;
   var _courseGrade;
-  DateTime _courseDate;
-  DateTime _firstDueDate;
-  DateTime _secondDueDate;
-  DateTime _thirdDueDate;
+   DateTime _courseDate;
+   DateTime _firstDueDate;
+   DateTime _secondDueDate;
+   DateTime _thirdDueDate;
 
   final _courseNumberList = [
     '1회',
@@ -36,7 +36,7 @@ class _AddCoursePageState extends State<AddCoursePage> {
 
   final _formKey = GlobalKey<FormState>();
   final _key = GlobalKey<ScaffoldState>();
-  bool processing;
+   bool processing;
 
   @override
   void initState() {
@@ -239,11 +239,11 @@ class _AddCoursePageState extends State<AddCoursePage> {
                                   ],
                                 ),
                                 onTap: () async {
-                                  DateTime picked = await showDatePicker(
+                                  DateTime picked = (await showDatePicker(
                                       context: context,
                                       initialDate: _courseDate,
                                       firstDate: DateTime(_courseDate.year - 5),
-                                      lastDate: DateTime(_courseDate.year + 5));
+                                      lastDate: DateTime(_courseDate.year + 5)));
                                   if (picked != null) {
                                     setState(() {
                                       _courseDate = picked;
@@ -297,13 +297,13 @@ class _AddCoursePageState extends State<AddCoursePage> {
                                   ],
                                 ),
                                 onTap: () async {
-                                  DateTime picked = await showDatePicker(
+                                  DateTime picked = (await showDatePicker(
                                       context: context,
                                       initialDate: _firstDueDate,
                                       firstDate:
                                           DateTime(_firstDueDate.year - 5),
                                       lastDate:
-                                          DateTime(_firstDueDate.year + 5));
+                                          DateTime(_firstDueDate.year + 5)));
                                   if (picked != null) {
                                     setState(() {
                                       _firstDueDate = picked;
@@ -357,13 +357,13 @@ class _AddCoursePageState extends State<AddCoursePage> {
                                   ],
                                 ),
                                 onTap: () async {
-                                  DateTime picked = await showDatePicker(
+                                  DateTime picked = (await showDatePicker(
                                       context: context,
                                       initialDate: _secondDueDate,
                                       firstDate:
                                           DateTime(_secondDueDate.year - 5),
                                       lastDate:
-                                          DateTime(_secondDueDate.year + 5));
+                                          DateTime(_secondDueDate.year + 5)));
                                   if (picked != null) {
                                     setState(() {
                                       _secondDueDate = picked;
@@ -417,13 +417,13 @@ class _AddCoursePageState extends State<AddCoursePage> {
                                   ],
                                 ),
                                 onTap: () async {
-                                  DateTime picked = await showDatePicker(
+                                  DateTime picked = (await showDatePicker(
                                       context: context,
                                       initialDate: _thirdDueDate,
                                       firstDate:
                                           DateTime(_thirdDueDate.year - 5),
                                       lastDate:
-                                          DateTime(_thirdDueDate.year + 5));
+                                          DateTime(_thirdDueDate.year + 5)));
                                   if (picked != null) {
                                     setState(() {
                                       _thirdDueDate = picked;

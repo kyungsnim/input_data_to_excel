@@ -11,18 +11,19 @@ class CourseModel extends DatabaseItem {
   DateTime thirdDueDate;  // 3차 제출기간
 
   CourseModel(
-      {this.id,
-      this.courseName,
-      this.courseNumber,
-        this.courseGrade,
-      this.courseDate,
-      this.firstDueDate,
-      this.secondDueDate,
-      this.thirdDueDate})
+      { this.id,
+         this.courseName,
+         this.courseNumber,
+         this.courseGrade,
+         this.courseDate,
+         this.firstDueDate,
+         this.secondDueDate,
+         this.thirdDueDate})
       : super(id);
 
   factory CourseModel.fromMap(Map data) {
     return CourseModel(
+      id: data['id'],
       courseName: data['courseName'],
       courseNumber: data['courseNumber'],
       courseGrade: data['courseGrade'],

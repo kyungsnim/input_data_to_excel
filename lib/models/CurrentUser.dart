@@ -10,12 +10,12 @@ class CurrentUser extends DatabaseItem {
   DateTime createdAt;
 
   CurrentUser(
-      {this.id,
-      this.password,
-      this.grade,
-      this.validateByAdmin,
-      this.role,
-      this.createdAt})
+      { this.id,
+         this.password,
+         this.grade,
+         this.validateByAdmin,
+         this.role,
+         this.createdAt})
       : super(id);
 
   factory CurrentUser.fromDocument(DocumentSnapshot doc) {

@@ -41,7 +41,7 @@ class SignUpPageWithUserIdState extends State<SignUpPageWithUserId> {
     // this.role,
     // this.createdAt})
     try {
-      Map<String, dynamic> userMap = {
+      Map<dynamic, dynamic> userMap = {
         "id": userId,
         "password": password,
         "grade": grade,

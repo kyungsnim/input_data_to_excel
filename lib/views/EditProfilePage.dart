@@ -1,3 +1,4 @@
+// @dart=2.9
 import 'package:input_data_to_excel/models/CurrentUser.dart';
 import 'package:input_data_to_excel/widgets/ProgressWidget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';

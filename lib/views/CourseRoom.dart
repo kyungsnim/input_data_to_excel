@@ -1,3 +1,4 @@
+// @dart=2.9
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:input_data_to_excel/views/HomePage.dart';
@@ -32,7 +33,7 @@ class _CourseRoomState extends State<CourseRoom> {
           backgroundColor: Colors.white,
           elevation: 0.0,
           // iconTheme: IconThemeData.fallback(), // 뒤로 가기
-          leading: InkWell(onTap: () => _onBackPressed(), child: Icon(Icons.arrow_back_ios_outlined, color: Colors.blueGrey,)),
+          leading: InkWell(onTap: () => /* _onBackPressed() */{}, child: Icon(Icons.arrow_back_ios_outlined, color: Colors.blueGrey,)),
           actions: [
             Padding(
               padding: const EdgeInsets.fromLTRB(3, 6, 26, 6),
@@ -45,41 +46,40 @@ class _CourseRoomState extends State<CourseRoom> {
     );
   }
 
-  // back 버튼 클릭시 종료할건지 물어보는
-  Future<bool> _onBackPressed() {
-    return showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text("홈으로 이동"),
-        content: Text("이동하시겠습니까? 입력된 자료는 저장되지 않습니다."),
-        actions: <Widget>[
-          FlatButton(
-            child: Container(
-              padding: const EdgeInsets.all(16),
-              child: Text('확인',
-                  style: GoogleFonts.montserrat(
-                      color: Colors.blueAccent, fontSize: 20)),
-            ),
-            onPressed: () {
-              Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => HomePage(0)));
-            },
-          ),
-          FlatButton(
-            child: Container(
-              padding: const EdgeInsets.all(16),
-              child: Text('취소',
-                  style: GoogleFonts.montserrat(
-                      color: Colors.grey, fontSize: 20)),
-            ),
-            onPressed: () {
-              Navigator.pop(context);
-            },
-          ),
-        ],
-      ),
-    ) ??
-        false;
-  }
+  // // back 버튼 클릭시 종료할건지 물어보는
+  // Future<bool>?? _onBackPressed() async{
+  //   return showDialog(
+  //     context: context,
+  //     builder: (context) => AlertDialog(
+  //       title: Text("홈으로 이동"),
+  //       content: Text("이동하시겠습니까? 입력된 자료는 저장되지 않습니다."),
+  //       actions: <Widget>[
+  //         FlatButton(
+  //           child: Container(
+  //             padding: const EdgeInsets.all(16),
+  //             child: Text('확인',
+  //                 style: GoogleFonts.montserrat(
+  //                     color: Colors.blueAccent, fontSize: 20)),
+  //           ),
+  //           onPressed: () {
+  //             Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => HomePage(0)));
+  //           },
+  //         ),
+  //         FlatButton(
+  //           child: Container(
+  //             padding: const EdgeInsets.all(16),
+  //             child: Text('취소',
+  //                 style: GoogleFonts.montserrat(
+  //                     color: Colors.grey, fontSize: 20)),
+  //           ),
+  //           onPressed: () {
+  //             Navigator.pop(context);
+  //           },
+  //         ),
+  //       ],
+  //     ),
+  //   ) ?? false;
+  // }
 
   answerList() {
     return Container(

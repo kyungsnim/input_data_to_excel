@@ -286,11 +286,9 @@ class _SettingUserGradeInfoPageState extends State<SettingUserGradeInfoPage> {
                 ),
                 onPressed: () async {
                   toUpperGrade();
-                  Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => HomePage(1)));
-                  showToast('학년 일괄 올리기 완료', duration: 2);
+                  Navigator.pushReplacement(context,
+                      MaterialPageRoute(builder: (context) => HomePage(1)));
+                  showToast('학년 일괄 올리기 완료', duration: 2, gravity: 3);
                 },
               ),
               FlatButton(
@@ -331,11 +329,9 @@ class _SettingUserGradeInfoPageState extends State<SettingUserGradeInfoPage> {
                 ),
                 onPressed: () async {
                   toLowerGrade();
-                  Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => HomePage(1)));
-                  showToast('학년 일괄 내리기 완료', duration: 2);
+                  Navigator.pushReplacement(context,
+                      MaterialPageRoute(builder: (context) => HomePage(1)));
+                  showToast('학년 일괄 내리기 완료', duration: 2, gravity: 3);
                 },
               ),
               FlatButton(
