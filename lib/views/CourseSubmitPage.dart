@@ -2,6 +2,7 @@
 import 'dart:io';
 
 import 'package:csv/csv.dart';
+import 'package:excel/excel.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter_mailer/flutter_mailer.dart';
 
@@ -280,7 +281,7 @@ class _CourseSubmitPageState extends State<CourseSubmitPage> {
 
   checkCoursePopup(event) async {
     fileName =
-        '${event.courseName}-${event.courseNumber}_${event.courseGrade}_${event.courseDate.year}년${event.courseDate.month}월${event.courseDate.day}일.csv';
+        '${event.courseName}-${event.courseNumber}_${event.courseGrade}_${event.courseDate.year}년${event.courseDate.month}월${event.courseDate.day}일.xlsx';
     await showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -299,7 +300,8 @@ class _CourseSubmitPageState extends State<CourseSubmitPage> {
                       ),
                       onPressed: () async {
                         // 엑셀 취합
-                        await getCsv(event);
+                        // await getCsv(event);
+                        await getExcel(event);
                         // 이메일 전송
                         sendMail(event);
                       },
@@ -392,90 +394,101 @@ class _CourseSubmitPageState extends State<CourseSubmitPage> {
         });
   }
 
-  getCsv(event) async {
-    List<List<dynamic>> rows = List<List<dynamic>>();
+  getExcel(event) async {
+    var excel = Excel.createExcel();
+    // excel.delete('Sheet1');
+    Sheet sheetObject = excel['Sheet1'];
+    // excel[
+    //     '${event.courseName}-${event.courseNumber}_${event.courseGrade}_${event.courseDate.year}년${event.courseDate.month}월${event.courseDate.day}일'];
 
+    // 최상단 꾸밀 raw
+    List<dynamic> raw;
     var cloud =
         await courseReference.doc(event.id).collection('SubmitUsers').get();
 
-    rows.add([
-      "수험번호",
-      "제출차수",
-      "1",
-      "2",
-      "3",
-      "4",
-      "5",
-      "6",
-      "7",
-      "8",
-      "9",
-      "10",
-      "11",
-      "12",
-      "13",
-      "14",
-      "15",
-      "16",
-      "17",
-      "18",
-      "19",
-      "20",
-      "21",
-      "22",
-      "23",
-      "24",
-      "25",
-      "26",
-      "27",
-      "28",
-      "29",
-      "30",
-      "31",
-      "32",
-      "33",
-      "34",
-      "35",
-      "36",
-      "37",
-      "38",
-      "39",
-      "30",
-      "41",
-      "42",
-      "43",
-      "44",
-      "45",
-      "46",
-      "47",
-      "48",
-      "49",
-      "50",
-    ]);
+    raw = [
+      "수험번호".toString(),
+      "제출차수".toString(),
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20,
+      21,
+      22,
+      23,
+      24,
+      25,
+      26,
+      27,
+      28,
+      29,
+      30,
+      31,
+      32,
+      33,
+      34,
+      35,
+      36,
+      37,
+      38,
+      39,
+      30,
+      41,
+      42,
+      43,
+      44,
+      45,
+      46,
+      47,
+      48,
+      49,
+      50,
+    ];
+
+    // 최상단에 셋팅
+    sheetObject.insertRowIterables(raw, 0);
 
     if (cloud.docs != null) {
       for (int i = 0; i < cloud.docs.length; i++) {
         List<dynamic> row = List<dynamic>();
         // 수험번호 넣기
-        row.add(cloud.docs[i].data()['id']);
+        row.add(int.parse(cloud.docs[i].data()['id']));
         // 제출차수 넣기
-        row.add(cloud.docs[i].data()['submitDegree']);
+        row.add(cloud.docs[i].data()['submitDegree'].toString());
         // 50까지 입력 답 넣기
         for (int j = 0; j < 50; j++) {
-          if(cloud.docs[i].data()['answer'][j] == null) {
+          if (cloud.docs[i].data()['answer'][j] == null) {
             row.add("");
           } else {
             row.add(cloud.docs[i].data()['answer'][j]);
           }
         }
-        rows.add(row);
+        sheetObject.insertRowIterables(row, i + 1);
       }
-      // 임시 파일 생성
+
+      // Save the Changes in file
       f = await _localFile;
-      // 데이터 넣은 rows를 csv 형태로 변환
-      String csv = const ListToCsvConverter().convert(rows);
-      // 변환된 csv 내용 파일에 쓰기
-      f.writeAsString(csv);
+      excel.encode().then((onValue) {
+        f
+          ..createSync(recursive: true)
+          ..writeAsBytesSync(onValue);
+      });
     }
   }
 
@@ -493,7 +506,7 @@ class _CourseSubmitPageState extends State<CourseSubmitPage> {
   sendMail(event) async {
     // if (Platform.isIOS) {
     Reference levelTestRef = FirebaseStorage.instance.ref().child(
-        'submitList/${DateTime.now().year}년/${DateTime.now().month}월/${event.courseName}-${event.courseNumber}_${event.courseGrade}_${event.courseDate.year}년${event.courseDate.month}월${event.courseDate.day}일');
+        'submitList/${DateTime.now().year}년/${DateTime.now().month}월/$fileName');
     // // upload Task는 제공되나 아직 실제 업로드 전
     UploadTask uploadTask = levelTestRef.putFile(f);
     // 실제 파일 업로드 (중간에 중단, 취소 등 하지 않을 것이므로 최대한 심플하게 가보자.)
