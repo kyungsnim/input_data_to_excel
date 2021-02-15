@@ -409,6 +409,8 @@ class _CourseSubmitPageState extends State<CourseSubmitPage> {
     raw = [
       "수험번호".toString(),
       "제출차수".toString(),
+      "이름".toString(),
+      "휴대폰".toString(),
       1,
       2,
       3,
@@ -471,6 +473,10 @@ class _CourseSubmitPageState extends State<CourseSubmitPage> {
         row.add(int.parse(cloud.docs[i].data()['id']));
         // 제출차수 넣기
         row.add(cloud.docs[i].data()['submitDegree'].toString());
+        // 이름 넣기
+        row.add(cloud.docs[i].data()['name'].toString());
+        // 휴대폰번호 넣기
+        row.add(cloud.docs[i].data()['phoneNumber'].toString());
         // 50까지 입력 답 넣기
         for (int j = 0; j < 50; j++) {
           if (cloud.docs[i].data()['answer'][j] == null) {

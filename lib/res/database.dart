@@ -7,6 +7,7 @@ class DatabaseService {
   getUserLoginInfo(String userId) async {
     // DocumentSnapshot currentUser;
     String password = "";
+    print('userId : $userId');
     try {
       await FirebaseFirestore.instance
           .collection("users")
@@ -14,11 +15,11 @@ class DatabaseService {
           .get().then((value) {
         // currentUser = value;
         password = value.data()["password"];
+        print("password : $password");
       });
     } catch (e) {
       return "ID error";
     }
-    // print("password : $password");
     // return currentUser;
     return password;
   }
@@ -54,13 +55,12 @@ class DatabaseService {
   //   });
   // }
 
-  // 이름검색 유저목록 가져오기
-  getUserInfoList(username) async {
+  // 수험번호 검색 유저목록 가져오기
+  getUserInfoList(userId) async {
     return FirebaseFirestore.instance
         .collection("users")
-        .where('profileName', isEqualTo: username)
-        .orderBy('level')
-        .snapshots();
+        .doc('userId')
+        .get();
   }
   // 모든 학년 유저 목록 가져오기
   getUserGradeList() async {

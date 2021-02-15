@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:input_data_to_excel/views/HomePage.dart';
 import 'package:input_data_to_excel/widgets/OptionTileWidget.dart';
+import 'package:toast/toast.dart';
 
 List<dynamic> myAnswerList;
 
@@ -10,6 +11,7 @@ class CourseRoom extends StatefulWidget {
   final event;
 
   CourseRoom(this.event);
+
   @override
   _CourseRoomState createState() => _CourseRoomState();
 }
@@ -23,27 +25,41 @@ class _CourseRoomState extends State<CourseRoom> {
     // checked = 0;
     myAnswerList = List.generate(totalLength, (index) => null); // 50개 답안지 생성
   }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
-      child: Scaffold(
-        appBar: AppBar(
-          title: Text('${widget.event.courseName}-${widget.event.courseNumber}\n${widget.event.courseGrade}', style: TextStyle(color: Colors.blueGrey, fontSize: 15, fontWeight: FontWeight.bold)),
-          centerTitle: false,
-          backgroundColor: Colors.white,
-          elevation: 0.0,
-          // iconTheme: IconThemeData.fallback(), // 뒤로 가기
-          leading: InkWell(onTap: () => /* _onBackPressed() */{}, child: Icon(Icons.arrow_back_ios_outlined, color: Colors.blueGrey,)),
-          actions: [
-            Padding(
-              padding: const EdgeInsets.fromLTRB(3, 6, 26, 6),
-              child: FlatButton(color: Colors.blueAccent, onPressed:() => checkSubmitPopup(), child: Text('제출', style: TextStyle(fontSize: 18, color: Colors.white))),
-            ),
-          ],
-        ),
-        body: answerList(),
-      )
-    );
+        child: Scaffold(
+      appBar: AppBar(
+        title: Text(
+            '${widget.event.courseName}-${widget.event.courseNumber}\n${widget.event.courseGrade}',
+            style: TextStyle(
+                color: Colors.blueGrey,
+                fontSize: 15,
+                fontWeight: FontWeight.bold)),
+        centerTitle: false,
+        backgroundColor: Colors.white,
+        elevation: 0.0,
+        // iconTheme: IconThemeData.fallback(), // 뒤로 가기
+        leading: InkWell(
+            onTap: () => /* _onBackPressed() */ {},
+            child: Icon(
+              Icons.arrow_back_ios_outlined,
+              color: Colors.blueGrey,
+            )),
+        actions: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(3, 6, 26, 6),
+            child: FlatButton(
+                color: Colors.blueAccent,
+                onPressed: () => checkSubmitPopup(),
+                child: Text('제출',
+                    style: TextStyle(fontSize: 18, color: Colors.white))),
+          ),
+        ],
+      ),
+      body: answerList(),
+    ));
   }
 
   // // back 버튼 클릭시 종료할건지 물어보는
@@ -84,29 +100,29 @@ class _CourseRoomState extends State<CourseRoom> {
   answerList() {
     return Container(
         child: Scrollbar(
-          thickness: 15,
-          // 문제 리스트에 스크롤 보이게
-          child: ListView(
+      thickness: 15,
+      // 문제 리스트에 스크롤 보이게
+      child: ListView(
+        shrinkWrap: true,
+        children: <Widget>[
+          // The getter 'documents' was called on null. 오류 남
+          ListView.builder(
+            primary: true,
+            padding: EdgeInsets.symmetric(horizontal: 24),
             shrinkWrap: true,
-            children: <Widget>[
-              // The getter 'documents' was called on null. 오류 남
-              ListView.builder(
-                primary: true,
-                padding: EdgeInsets.symmetric(horizontal: 24),
-                shrinkWrap: true,
-                // 'visible' was called on null 방지
-                physics: ClampingScrollPhysics(),
-                // 'visible' was called on null 방지
-                itemCount: 50,
-                itemBuilder: (context, index) {
-                  return AnswerTile(
-                      index: index,
-                  );
-                },
-              ),
-            ],
+            // 'visible' was called on null 방지
+            physics: ClampingScrollPhysics(),
+            // 'visible' was called on null 방지
+            itemCount: 50,
+            itemBuilder: (context, index) {
+              return AnswerTile(
+                index: index,
+              );
+            },
           ),
-        ));
+        ],
+      ),
+    ));
   }
 
   checkSubmitPopup() async {
@@ -126,7 +142,9 @@ class _CourseRoomState extends State<CourseRoom> {
                 ),
                 onPressed: () {
                   _submit();
-                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => HomePage(0)));
+                  Navigator.pushReplacement(context,
+                      MaterialPageRoute(builder: (context) => HomePage(0)));
+                  showToast('제출 완료', duration: 2);
                 },
               ),
               FlatButton(
@@ -148,27 +166,45 @@ class _CourseRoomState extends State<CourseRoom> {
   void _submit() {
     // 몇차수 제출기간에 냈는지 체크
     var checkDegree;
-    var firstDueDate = DateTime(widget.event.firstDueDate.year, widget.event.firstDueDate.month, widget.event.firstDueDate.day).microsecondsSinceEpoch;
-    var secondDueDate = DateTime(widget.event.secondDueDate.year, widget.event.secondDueDate.month, widget.event.secondDueDate.day).microsecondsSinceEpoch;
+    var firstDueDate = DateTime(widget.event.firstDueDate.year,
+            widget.event.firstDueDate.month, widget.event.firstDueDate.day, 23, 59, 59)
+        .microsecondsSinceEpoch;
+    var secondDueDate = DateTime(widget.event.secondDueDate.year,
+            widget.event.secondDueDate.month, widget.event.secondDueDate.day, 23, 59, 59)
+        .microsecondsSinceEpoch;
     var today = DateTime.now().microsecondsSinceEpoch;
 
     // 오늘이 1차기간 이전이면 "1차", 1차기간 ~ 2차기간 사이면 "2차", 이외는 "3차"
-    today < firstDueDate ? checkDegree = "1차"
-        : firstDueDate < today && today < secondDueDate ? checkDegree = "2차"
-        : checkDegree = "3차";
+    today < firstDueDate
+        ? checkDegree = "1차"
+        : firstDueDate < today && today < secondDueDate
+            ? checkDegree = "2차"
+            : checkDegree = "3차";
 
-    courseReference.doc(widget.event.id).collection("SubmitUsers").doc(currentUser.id).set({
+    courseReference
+        .doc(widget.event.id)
+        .collection("SubmitUsers")
+        .doc(currentUser.id)
+        .set({
       "id": currentUser.id,
       "submitDegree": checkDegree,
+      "name": currentUser.name,
+      "phoneNumber": currentUser.phoneNumber,
       "answer": myAnswerList,
       "createdAt": DateTime.now(),
     });
+  }
+
+  showToast(String msg, {int duration, int gravity}) {
+    Toast.show(msg, context, duration: duration, gravity: gravity);
   }
 }
 
 class AnswerTile extends StatefulWidget {
   final int index;
+
   AnswerTile({this.index});
+
   @override
   _AnswerTileState createState() => _AnswerTileState();
 }
@@ -179,7 +215,7 @@ class _AnswerTileState extends State<AnswerTile> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 50,
+        height: 50,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
@@ -201,11 +237,12 @@ class _AnswerTileState extends State<AnswerTile> {
               flex: 1,
               child: GestureDetector(
                 onTap: () {
-                    setState(() {
-                      optionSelected = "1";
-                      myAnswerList[widget.index] = int.parse(optionSelected); // 정답지에 답 체크
-                      // checked++;
-                    });
+                  setState(() {
+                    optionSelected = "1";
+                    myAnswerList[widget.index] =
+                        int.parse(optionSelected); // 정답지에 답 체크
+                    // checked++;
+                  });
                   // }
                 },
                 child: OptionTile(
@@ -218,11 +255,12 @@ class _AnswerTileState extends State<AnswerTile> {
               flex: 1,
               child: GestureDetector(
                 onTap: () {
-                    setState(() {
-                      optionSelected = "2";
-                      myAnswerList[widget.index] = int.parse(optionSelected); // 정답지에 답 체크
-                      // checked++;
-                    });
+                  setState(() {
+                    optionSelected = "2";
+                    myAnswerList[widget.index] =
+                        int.parse(optionSelected); // 정답지에 답 체크
+                    // checked++;
+                  });
                 },
                 child: OptionTile(
                   option: "2",
@@ -234,11 +272,12 @@ class _AnswerTileState extends State<AnswerTile> {
               flex: 1,
               child: GestureDetector(
                 onTap: () {
-                    setState(() {
-                      optionSelected = "3";
-                      myAnswerList[widget.index] = int.parse(optionSelected); // 정답지에 답 체크
-                      // checked++;
-                    });
+                  setState(() {
+                    optionSelected = "3";
+                    myAnswerList[widget.index] =
+                        int.parse(optionSelected); // 정답지에 답 체크
+                    // checked++;
+                  });
                 },
                 child: OptionTile(
                   option: "3",
@@ -250,11 +289,12 @@ class _AnswerTileState extends State<AnswerTile> {
               flex: 1,
               child: GestureDetector(
                 onTap: () {
-                    setState(() {
-                      optionSelected = "4";
-                      myAnswerList[widget.index] = int.parse(optionSelected); // 정답지에 답 체크
-                      // checked++;
-                    });
+                  setState(() {
+                    optionSelected = "4";
+                    myAnswerList[widget.index] =
+                        int.parse(optionSelected); // 정답지에 답 체크
+                    // checked++;
+                  });
                   // }
                 },
                 child: OptionTile(
@@ -267,11 +307,12 @@ class _AnswerTileState extends State<AnswerTile> {
               flex: 1,
               child: GestureDetector(
                 onTap: () {
-                    setState(() {
-                      optionSelected = "5";
-                      myAnswerList[widget.index] = int.parse(optionSelected); // 정답지에 답 체크
-                      // checked++;
-                    });
+                  setState(() {
+                    optionSelected = "5";
+                    myAnswerList[widget.index] =
+                        int.parse(optionSelected); // 정답지에 답 체크
+                    // checked++;
+                  });
                   // }
                 },
                 child: OptionTile(
@@ -284,8 +325,9 @@ class _AnswerTileState extends State<AnswerTile> {
               flex: 1,
               child: Container(
                   width: 20,
-                  color: optionSelected != "" ? Colors.green.withOpacity(0.7) : Colors.redAccent.withOpacity(0.7)
-              ),
+                  color: optionSelected != ""
+                      ? Colors.green.withOpacity(0.7)
+                      : Colors.redAccent.withOpacity(0.7)),
             ),
           ],
         ));

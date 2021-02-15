@@ -66,6 +66,28 @@ class _MyInfoPageState extends State<MyInfoPage> {
                 padding: const EdgeInsets.all(10.0),
                 child: Row(
                   children: [
+                    Text("이름",
+                        style: GoogleFonts.montserrat(
+                            fontSize: 20, fontWeight: FontWeight.bold)),
+                  ],
+                ),
+              ),
+              userInfo(user.name),
+              Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: Row(
+                  children: [
+                    Text("휴대폰번호",
+                        style: GoogleFonts.montserrat(
+                            fontSize: 20, fontWeight: FontWeight.bold)),
+                  ],
+                ),
+              ),
+              userInfo(user.phoneNumber),
+              Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: Row(
+                  children: [
                     Text("가입일",
                         style: GoogleFonts.montserrat(
                             fontSize: 20, fontWeight: FontWeight.bold)),
@@ -255,7 +277,7 @@ class _MyInfoPageState extends State<MyInfoPage> {
               height: MediaQuery
                   .of(context)
                   .size
-                  .height * 0.2,
+                  .height * 0.4,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(10),
               ),

@@ -18,12 +18,14 @@ class SignUpPageWithUserIdState extends State<SignUpPageWithUserId> {
   var grade; // 학년
   final _formKey = GlobalKey<FormState>();
   final _scaffoldKey = GlobalKey<ScaffoldState>();
+  var isLoading;
 
   @override
   void initState() {
     super.initState();
     setState(() {
       // grade = "중학교 1학년";
+      isLoading = false;
     });
   }
 
@@ -210,21 +212,44 @@ class SignUpPageWithUserIdState extends State<SignUpPageWithUserId> {
                         ),
                       ),
                       SizedBox(height: MediaQuery.of(context).size.height * 0.1),
-                      InkWell(
-                          onTap: () {
-                            FocusScope.of(context)
-                                .requestFocus(new FocusNode()); // 키보드 감추기
-                            if (_formKey.currentState.validate()) {
-                              signUpWithUserIdPassword();
-                            }
-                          },
-                          child: userIdLoginButton(context, '회원 가입', Colors.white, Colors.green.withOpacity(0.7), Colors.green)),
-                      SizedBox(height: 10),
-                      InkWell(
-                          onTap: () {
-                            Navigator.pop(context);
-                          },
-                          child: userIdLoginButton(context, '돌아가기', Colors.black, Colors.white.withOpacity(0.7), Colors.white)),
+                      isLoading == true ? Column(
+                        children: [
+                          CircularProgressIndicator(
+                            valueColor: new AlwaysStoppedAnimation<Color>(Colors.blueAccent),
+                            strokeWidth: 10,
+                          ),
+                          SizedBox(height: MediaQuery.of(context).size.height * 0.07),
+                        ],
+                      )
+                          : Column(
+                        children: [
+                          InkWell(
+                              onTap: () {
+                                setState(() {
+                                  isLoading = true;
+                                });
+                                FocusScope.of(context)
+                                    .requestFocus(new FocusNode()); // 키보드 감추기
+                                ds.getUserInfoList(userId).then((val){
+                                  if(val.exists) {
+                                    if (_formKey.currentState.validate()) {
+                                      signUpWithUserIdPassword();
+                                    }
+                                  } else {
+                                    checkIdPasswordPopup('중복 수험번호', '해당 수험번호는 이미 가입되어 있습니다.');
+                                  }
+                                });
+
+                              },
+                              child: userIdLoginButton(context, '회원 가입', Colors.white, Colors.green.withOpacity(0.7), Colors.green)),
+                          SizedBox(height: 10),
+                          InkWell(
+                              onTap: () {
+                                Navigator.pop(context);
+                              },
+                              child: userIdLoginButton(context, '돌아가기', Colors.black, Colors.white.withOpacity(0.7), Colors.white)),
+                        ],
+                      ),
                       SizedBox(height: 50),
                       Text('© Copyright ${DateTime.now().year} by 조지형 국어학원', style: TextStyle(color: Colors.white54, fontSize: 12)),
                       SizedBox(height: 50),
@@ -234,5 +259,33 @@ class SignUpPageWithUserIdState extends State<SignUpPageWithUserId> {
           ]
         )
     );
+  }
+
+  checkIdPasswordPopup(title, content) async {
+    await showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text(title),
+            content: Text(
+                content),
+            actions: [
+              FlatButton(
+                child: Container(
+                  padding: const EdgeInsets.all(16),
+                  child: Text('확인',
+                      style: GoogleFonts.montserrat(
+                          color: Colors.grey, fontSize: 20)),
+                ),
+                onPressed: () async {
+                  Navigator.pop(context);
+                  setState(() {
+                    isLoading = false;
+                  });
+                },
+              ),
+            ],
+          );
+        });
   }
 }

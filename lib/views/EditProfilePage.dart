@@ -1,9 +1,11 @@
 // @dart=2.9
+import 'package:flutter/services.dart';
 import 'package:input_data_to_excel/models/CurrentUser.dart';
 import 'package:input_data_to_excel/widgets/ProgressWidget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:multi_masked_formatter/multi_masked_formatter.dart';
 import 'package:toast/toast.dart';
 
 import 'HomePage.dart';
@@ -23,6 +25,11 @@ class _EditProfilePageState extends State<EditProfilePage> {
   CurrentUser currentUser;
   final gradeList = ["중학교 1학년", "중학교 2학년","중학교 3학년","고등학교 1학년","고등학교 2학년","고등학교 3학년",];
   var grade; // 학년
+  var name; // 이름
+  var phoneNumber; // 휴대폰번호
+  TextEditingController nameController = TextEditingController();
+  TextEditingController phoneNumberController = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
 
   @override
   void initState() {
@@ -35,6 +42,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
   @override
   void dispose() {
     super.dispose();
+    nameController.dispose();
+    phoneNumberController.dispose();
   }
 
   getAndDisplayUserInformation() async {
@@ -50,6 +59,10 @@ class _EditProfilePageState extends State<EditProfilePage> {
     setState(() {
       loading = false;
       grade = currentUser.grade;
+      nameController.text = currentUser.name == "-" ? "" : currentUser.name; // 이름 설정 안한 상태면 비어두고 설정 해두었으면 설정값 불러오기
+      phoneNumberController.text = currentUser.phoneNumber == "-" ? "" : currentUser.phoneNumber; // 휴대폰번호 설정 안한 상태면 비어두고 설정 해두었으면 설정값 불러오기
+      name = nameController.text;
+      phoneNumber = phoneNumberController.text;
     });
   }
 
@@ -61,91 +74,199 @@ class _EditProfilePageState extends State<EditProfilePage> {
             ? circularProgress()
             : Container(
           color: Colors.white,
-                child: Column(
+                child: Form(
+                  key: _formKey,
+                  child: Column(
               children: [
-                Container(
-                  alignment: Alignment.center,
-                  decoration: BoxDecoration(
-                      border: Border.all(color: Colors.blueAccent.withOpacity(0.5)),
-                      borderRadius: BorderRadius.circular(10),
-                      color: Colors.white,
-                      boxShadow: [
-                        BoxShadow(offset: Offset(1, 1), blurRadius: 5, color: Colors.white24)
-                      ]
-                  ),
-                  width: MediaQuery.of(context).size.width * 0.8,
-                  height: MediaQuery.of(context).size.height * 0.07,
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 10),
-                    child: Row(
-                      children: [
-                        Icon(Icons.perm_contact_cal_outlined, color: Colors.blueAccent),
-                        SizedBox(width: 15),
-                        Expanded(
-                          flex: 1,
-                          child: DropdownButton(
-                              hint: Text('학년 선택'),
-                              value: grade,
-                              icon: Icon(Icons.arrow_downward),
-                              underline: Container(
-                                height: 1,
-                                color: Colors.white,
-                              ),
-                              items: gradeList.map((value) {
-                                return DropdownMenuItem(
-                                  value: value,
-                                  child: Text("$value",
-                                      style: GoogleFonts.montserrat(fontSize: 15)),
-                                );
-                              }).toList(),
-                              onChanged: (value) {
-                                setState(() {
-                                  grade = value;
-                                });
-                              }),
-                        ),
-                      ],
+                  Container(
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                        border: Border.all(color: Colors.blueAccent.withOpacity(0.5)),
+                        borderRadius: BorderRadius.circular(10),
+                        color: Colors.white,
+                        boxShadow: [
+                          BoxShadow(offset: Offset(1, 1), blurRadius: 5, color: Colors.white24)
+                        ]
+                    ),
+                    width: MediaQuery.of(context).size.width * 0.8,
+                    height: MediaQuery.of(context).size.height * 0.07,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 10),
+                      child: Row(
+                        children: [
+                          Icon(Icons.perm_contact_cal_outlined, color: Colors.blueAccent),
+                          SizedBox(width: 15),
+                          Expanded(
+                            flex: 1,
+                            child: DropdownButton(
+                                hint: Text('학년 선택'),
+                                value: grade,
+                                icon: Icon(Icons.arrow_downward),
+                                underline: Container(
+                                  height: 1,
+                                  color: Colors.white,
+                                ),
+                                items: gradeList.map((value) {
+                                  return DropdownMenuItem(
+                                    value: value,
+                                    child: Text("$value",
+                                        style: GoogleFonts.montserrat(fontSize: 15)),
+                                  );
+                                }).toList(),
+                                onChanged: (value) {
+                                  setState(() {
+                                    grade = value;
+                                  });
+                                }),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    InkWell(
-                      onTap: () {
-                        updateUserData();
-                        Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) =>
-                                    HomePage(1) // ProfilePage
+                  SizedBox(height: 10),
+                  Container(
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                        border: Border.all(color: Colors.blueAccent.withOpacity(0.5)),
+                        borderRadius: BorderRadius.circular(10),
+                        color: Colors.white,
+                        boxShadow: [
+                          BoxShadow(offset: Offset(1, 1), blurRadius: 5, color: Colors.white24)
+                        ]
+                    ),
+                    width: MediaQuery.of(context).size.width * 0.8,
+                    height: MediaQuery.of(context).size.height * 0.07,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 10),
+                      child: Row(
+                        children: [
+                          Icon(Icons.person, color: Colors.blueAccent),
+                          SizedBox(width: 15),
+                          Expanded(
+                            flex: 1,
+                            child: TextFormField(
+                              controller: nameController,
+                              cursorColor: Colors.blue,
+                              validator: (val) {
+                                if (val.isEmpty) {
+                                  return '이름을 입력하세요';
+                                } else {
+                                  return null;
+                                }
+                              },
+                              decoration: InputDecoration(
+                                  border: InputBorder.none,
+                                  hintText: '이름',
+                                  hintStyle: GoogleFonts.montserrat(fontSize: 15)),
+                              onChanged: (val) {
+                                name = val;
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 10),
+                  Container(
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                        border: Border.all(color: Colors.blueAccent.withOpacity(0.5)),
+                        borderRadius: BorderRadius.circular(10),
+                        color: Colors.white,
+                        boxShadow: [
+                          BoxShadow(offset: Offset(1, 1), blurRadius: 5, color: Colors.white24)
+                        ]
+                    ),
+                    width: MediaQuery.of(context).size.width * 0.8,
+                    height: MediaQuery.of(context).size.height * 0.07,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 10),
+                      child: Row(
+                        children: [
+                          Icon(Icons.phone, color: Colors.blueAccent),
+                          SizedBox(width: 15),
+                          Expanded(
+                            flex: 1,
+                            child: TextFormField(
+                              inputFormatters: [
+                                MultiMaskedTextInputFormatter(
+                                    masks: ['xxx-xxxx-xxxx', 'xxx-xxx-xxxx'], separator: '-')
+                              ],
+                              keyboardType: TextInputType.number,
+                              controller: phoneNumberController,
+                              cursorColor: Colors.blue,
+                              validator: (val) {
+                                if (val.isEmpty) {
+                                  return '휴대폰 번호을 입력하세요';
+                                } else {
+                                  print('val : $val');
+                                  return null;
+                                }
+                              },
+                              decoration: InputDecoration(
+                                  border: InputBorder.none,
+                                  hintText: '휴대폰번호',
+                                  hintStyle: GoogleFonts.montserrat(fontSize: 15)),
+                              onChanged: (val) {
+                                phoneNumber = val;
+                                // if(phoneNumberController.text.length == 3) {
+                                //   setState(() {
+                                //     phoneNumberController.text = val + '-';
+                                //   });
+                                // }
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  Spacer(),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      InkWell(
+                        onTap: () {
+                          if(_formKey.currentState.validate()) {
+                            updateUserData();
+                            Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        HomePage(1) // ProfilePage
                                 ));
-                      },
-                      child: Container(
-                        padding: const EdgeInsets.all(16),
-                        child: Text('수정',
-                            style: GoogleFonts.montserrat(
-                                color: Colors.blueAccent, fontSize: 18)),
+                          }
+
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.all(16),
+                          child: Text('수정',
+                              style: GoogleFonts.montserrat(
+                                  color: Colors.blueAccent, fontSize: 18)),
+                        ),
                       ),
-                    ),
-                    InkWell(
-                      onTap: () => Navigator.pop(context),
-                      child: Container(
-                        padding: const EdgeInsets.all(16),
-                        child: Text('취소',
-                            style: GoogleFonts.montserrat(
-                                color: Colors.grey, fontSize: 18)),
+                      InkWell(
+                        onTap: () => Navigator.pop(context),
+                        child: Container(
+                          padding: const EdgeInsets.all(16),
+                          child: Text('취소',
+                              style: GoogleFonts.montserrat(
+                                  color: Colors.grey, fontSize: 18)),
+                        ),
                       ),
-                    ),
-                  ],
-                )
+                    ],
+                  )
               ],
-            )));
+            ),
+                )));
   }
 
   updateUserData() async {
     await userReference.doc(widget.currentUserId).update({
       'grade': grade,
+      'name': name,
+      'phoneNumber': phoneNumber
     });
     showToast('정보 수정 완료', duration: 2);
   }
