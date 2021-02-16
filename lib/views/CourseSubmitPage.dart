@@ -296,7 +296,7 @@ class _CourseSubmitPageState extends State<CourseSubmitPage> {
                         padding: const EdgeInsets.all(16),
                         child: Text('전송',
                             style: GoogleFonts.montserrat(
-                                color: Colors.red, fontSize: 20)),
+                                color: Colors.red, fontSize: 12)),
                       ),
                       onPressed: () async {
                         // 엑셀 취합
@@ -306,6 +306,26 @@ class _CourseSubmitPageState extends State<CourseSubmitPage> {
                         sendMail(event);
                       },
                     )
+                  : Container(),
+              currentUser.role == 'admin'
+                  ? FlatButton(
+                child: Container(
+                  padding: const EdgeInsets.all(16),
+                  child: Text('삭제',
+                      style: GoogleFonts.montserrat(
+                          color: Colors.red, fontSize: 12)),
+                ),
+                onPressed: () async {
+                  // 과제 삭제
+                  await deleteCourse(event);
+                  Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) =>
+                              HomePage(0) // ProfilePage
+                      ));
+                },
+              )
                   : Container(),
               FlatButton(
                 child: Container(
@@ -347,6 +367,10 @@ class _CourseSubmitPageState extends State<CourseSubmitPage> {
             ],
           );
         });
+  }
+
+  deleteCourse(event) {
+    courseReference.doc(event.id).delete();
   }
 
   checkDeletePopup(event) async {

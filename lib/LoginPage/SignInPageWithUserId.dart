@@ -182,6 +182,7 @@ class SignInPageWithUserIdState extends State<SignInPageWithUserId> {
                       child: Padding(
                         padding: const EdgeInsets.all(10.0),
                         child: TextFormField(
+                          keyboardType: TextInputType.number,
                           controller: _userIdController,
                           cursorColor: Colors.blue,
                           validator: (val) {

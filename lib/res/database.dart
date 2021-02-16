@@ -59,7 +59,7 @@ class DatabaseService {
   getUserInfoList(userId) async {
     return FirebaseFirestore.instance
         .collection("users")
-        .doc('userId')
+        .doc(userId)
         .get();
   }
   // 모든 학년 유저 목록 가져오기

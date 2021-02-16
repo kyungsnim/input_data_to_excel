@@ -128,6 +128,22 @@ class _MyInfoPageState extends State<MyInfoPage> {
                     )),
               ),
               SizedBox(height: 10),
+              Center(
+                child: Container(
+                    width: 200,
+                    child: RaisedButton(
+                      color: Colors.redAccent,
+                      child: Text(
+                        '회원 탈퇴',
+                        style: GoogleFonts.montserrat(
+                            fontSize: 15,
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold),
+                      ),
+                      onPressed: () => deleteCheckPopup(),
+                    )),
+              ),
+              SizedBox(height: 10),
               currentUser.role == 'admin' ? Center(
                 child: Container(
                     width: 200,
@@ -253,6 +269,42 @@ class _MyInfoPageState extends State<MyInfoPage> {
     );
   }
 
+  deleteCheckPopup() async {
+    await showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('회원 탈퇴'),
+            content: Text("탈퇴하시겠습니까?"),
+            actions: [
+              FlatButton(
+                child: Container(
+                  padding: const EdgeInsets.all(16),
+                  child: Text('확인',
+                      style: GoogleFonts.montserrat(
+                          color: Colors.blueAccent, fontSize: 20)),
+                ),
+                onPressed: () async {
+                  userReference.doc(currentUserId).delete();
+                  signOut();
+                },
+              ),
+              FlatButton(
+                child: Container(
+                  padding: const EdgeInsets.all(16),
+                  child: Text('취소',
+                      style: GoogleFonts.montserrat(
+                          color: Colors.grey, fontSize: 20)),
+                ),
+                onPressed: () async {
+                  Navigator.pop(context);
+                },
+              ),
+            ],
+          );
+        });
+  }
+
   void _showEditProfileDialog(context) {
     showDialog(
       context: context,
@@ -277,7 +329,7 @@ class _MyInfoPageState extends State<MyInfoPage> {
               height: MediaQuery
                   .of(context)
                   .size
-                  .height * 0.4,
+                  .height * 0.3,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(10),
               ),
