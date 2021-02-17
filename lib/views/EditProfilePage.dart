@@ -12,8 +12,9 @@ import 'HomePage.dart';
 
 class EditProfilePage extends StatefulWidget {
   final String currentUserId;
+  final bool byAdmin;
 
-  EditProfilePage({this.currentUserId});
+  EditProfilePage({this.currentUserId, this.byAdmin});
 
   @override
   _EditProfilePageState createState() => _EditProfilePageState();
@@ -78,52 +79,52 @@ class _EditProfilePageState extends State<EditProfilePage> {
                   key: _formKey,
                   child: Column(
               children: [
-                  // Container(
-                  //   alignment: Alignment.center,
-                  //   decoration: BoxDecoration(
-                  //       border: Border.all(color: Colors.blueAccent.withOpacity(0.5)),
-                  //       borderRadius: BorderRadius.circular(10),
-                  //       color: Colors.white,
-                  //       boxShadow: [
-                  //         BoxShadow(offset: Offset(1, 1), blurRadius: 5, color: Colors.white24)
-                  //       ]
-                  //   ),
-                  //   width: MediaQuery.of(context).size.width * 0.8,
-                  //   height: MediaQuery.of(context).size.height * 0.07,
-                  //   child: Padding(
-                  //     padding: const EdgeInsets.symmetric(horizontal: 10),
-                  //     child: Row(
-                  //       children: [
-                  //         Icon(Icons.perm_contact_cal_outlined, color: Colors.blueAccent),
-                  //         SizedBox(width: 15),
-                  //         Expanded(
-                  //           flex: 1,
-                  //           child: DropdownButton(
-                  //               hint: Text('학년 선택'),
-                  //               value: grade,
-                  //               icon: Icon(Icons.arrow_downward),
-                  //               underline: Container(
-                  //                 height: 1,
-                  //                 color: Colors.white,
-                  //               ),
-                  //               items: gradeList.map((value) {
-                  //                 return DropdownMenuItem(
-                  //                   value: value,
-                  //                   child: Text("$value",
-                  //                       style: GoogleFonts.montserrat(fontSize: 15)),
-                  //                 );
-                  //               }).toList(),
-                  //               onChanged: (value) {
-                  //                 setState(() {
-                  //                   grade = value;
-                  //                 });
-                  //               }),
-                  //         ),
-                  //       ],
-                  //     ),
-                  //   ),
-                  // ),
-                  // SizedBox(height: 10),
+                  widget.byAdmin ? Container(
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                        border: Border.all(color: Colors.blueAccent.withOpacity(0.5)),
+                        borderRadius: BorderRadius.circular(10),
+                        color: Colors.white,
+                        boxShadow: [
+                          BoxShadow(offset: Offset(1, 1), blurRadius: 5, color: Colors.white24)
+                        ]
+                    ),
+                    width: MediaQuery.of(context).size.width * 0.8,
+                    height: MediaQuery.of(context).size.height * 0.07,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 10),
+                      child: Row(
+                        children: [
+                          Icon(Icons.perm_contact_cal_outlined, color: Colors.blueAccent),
+                          SizedBox(width: 15),
+                          Expanded(
+                            flex: 1,
+                            child: DropdownButton(
+                                hint: Text('학년 선택'),
+                                value: grade,
+                                icon: Icon(Icons.arrow_downward),
+                                underline: Container(
+                                  height: 1,
+                                  color: Colors.white,
+                                ),
+                                items: gradeList.map((value) {
+                                  return DropdownMenuItem(
+                                    value: value,
+                                    child: Text("$value",
+                                        style: GoogleFonts.montserrat(fontSize: 15)),
+                                  );
+                                }).toList(),
+                                onChanged: (value) {
+                                  setState(() {
+                                    grade = value;
+                                  });
+                                }),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ) : Container(),
+                  SizedBox(height: 10),
                   Container(
                     alignment: Alignment.center,
                     decoration: BoxDecoration(
@@ -230,7 +231,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                         onTap: () {
                           if(_formKey.currentState.validate()) {
                             updateUserData();
-                            Navigator.pushReplacement(
+                            widget.byAdmin ? Navigator.pop(context) : Navigator.pushReplacement(
                                 context,
                                 MaterialPageRoute(
                                     builder: (context) =>

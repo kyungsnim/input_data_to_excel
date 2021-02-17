@@ -108,13 +108,13 @@ class DatabaseService {
         .snapshots();
   }
 
-  // 휴대폰번호검색 유저목록 가져오기
-  getUserInfoListByPhoneNumber(phoneNumber) async {
+  // 수험번호검색 유저목록 가져오기
+  getUserInfoListById(id) async {
     return FirebaseFirestore.instance
         .collection("users")
     // .where('phoneNumber', isEqualTo: phoneNumber)
-        .orderBy('phoneNumber')
-        .startAt([phoneNumber.toString().toUpperCase().trim()]).endAt([phoneNumber.toString().toUpperCase().trim()+'\uf8ff'])
+        .orderBy('id')
+        .startAt([id.toString().trim()]).endAt([id.toString().trim()+'\uf8ff'])
         .snapshots();
   }
 

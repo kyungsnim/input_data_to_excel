@@ -1,6 +1,7 @@
 // @dart=2.9
 import 'dart:io';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:csv/csv.dart';
 import 'package:excel/excel.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -268,7 +269,11 @@ class _CourseSubmitPageState extends State<CourseSubmitPage> {
                             //         GoogleFonts.montserrat(color: Colors.red)),
                           ],
                         ),
-                        onTap: () {
+                        onLongPress: () async {
+                          if (currentUser.role == "admin") {
+                            await submitDeletePopup(event);
+                          }
+                        }, onTap: () {
                           checkCoursePopup(event);
                         },
                       )),
@@ -296,36 +301,15 @@ class _CourseSubmitPageState extends State<CourseSubmitPage> {
                         padding: const EdgeInsets.all(16),
                         child: Text('전송',
                             style: GoogleFonts.montserrat(
-                                color: Colors.red, fontSize: 12)),
+                                color: Colors.red, fontSize: 20)),
                       ),
                       onPressed: () async {
                         // 엑셀 취합
-                        // await getCsv(event);
                         await getExcel(event);
                         // 이메일 전송
                         sendMail(event);
                       },
                     )
-                  : Container(),
-              currentUser.role == 'admin'
-                  ? FlatButton(
-                child: Container(
-                  padding: const EdgeInsets.all(16),
-                  child: Text('삭제',
-                      style: GoogleFonts.montserrat(
-                          color: Colors.red, fontSize: 12)),
-                ),
-                onPressed: () async {
-                  // 과제 삭제
-                  await deleteCourse(event);
-                  Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) =>
-                              HomePage(0) // ProfilePage
-                      ));
-                },
-              )
                   : Container(),
               FlatButton(
                 child: Container(
@@ -369,8 +353,61 @@ class _CourseSubmitPageState extends State<CourseSubmitPage> {
         });
   }
 
-  deleteCourse(event) {
-    courseReference.doc(event.id).delete();
+  submitDeletePopup(event) async {
+    await showDialog(
+        context: context,
+        builder: (BuildContext context) {
+      return AlertDialog(
+        title: Text('과제 삭제'),
+        content: Text("해당 과제를 삭제하시겠습니까?",
+            style: TextStyle(color: Colors.redAccent)),
+        actions: [
+          FlatButton(
+            child: Container(
+              padding: const EdgeInsets.all(16),
+              child: Text('확인',
+                  style: GoogleFonts.montserrat(
+                      color: Colors.blueAccent, fontSize: 20)),
+            ),
+            onPressed: () async {
+              // batch 생성
+              WriteBatch writeBatch =
+              firestoreReference.batch();
+
+              await courseReference.doc(event.id).collection('messages').get().then((snapshot) {
+                for (DocumentSnapshot ds in snapshot.docs){
+                  writeBatch.delete(ds.reference);
+                }
+              });
+
+              writeBatch.delete(courseReference.doc(event.id));
+
+              // batch end
+              writeBatch.commit();
+
+              showToast("과제 삭제 완료");
+              Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) =>
+                          HomePage(0) // ProfilePage
+                  ));
+            },
+          ),
+          FlatButton(
+            child: Container(
+              padding: const EdgeInsets.all(16),
+              child: Text('취소',
+                  style: GoogleFonts.montserrat(
+                      color: Colors.grey, fontSize: 20)),
+            ),
+            onPressed: () async {
+              Navigator.pop(context);
+            },
+          ),
+        ],
+      );
+    });
   }
 
   checkDeletePopup(event) async {

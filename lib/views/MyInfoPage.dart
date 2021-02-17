@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'EditProfilePage.dart';
+import 'EditUserInfoPage.dart';
 import 'HomePage.dart';
 import 'SettingUserGradeInfoPage.dart';
 
@@ -116,7 +117,7 @@ class _MyInfoPageState extends State<MyInfoPage> {
                 child: Container(
                     width: 200,
                     child: RaisedButton(
-                      color: Colors.blueGrey,
+                      color: Colors.blueAccent,
                       child: Text(
                         '로그아웃',
                         style: GoogleFonts.montserrat(
@@ -132,7 +133,7 @@ class _MyInfoPageState extends State<MyInfoPage> {
                 child: Container(
                     width: 200,
                     child: RaisedButton(
-                      color: Colors.redAccent,
+                      color: Colors.blueAccent,
                       child: Text(
                         '회원 탈퇴',
                         style: GoogleFonts.montserrat(
@@ -143,41 +144,68 @@ class _MyInfoPageState extends State<MyInfoPage> {
                       onPressed: () => deleteCheckPopup(),
                     )),
               ),
-              SizedBox(height: 10),
-              currentUser.role == 'admin' ? Center(
-                child: Container(
-                    width: 200,
-                    child: RaisedButton(
-                      color: Colors.redAccent,
-                      child: Text(
-                        '가입 승인 (관리자용)',
-                        style: GoogleFonts.montserrat(
-                            fontSize: 15,
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold),
-                      ),
-                      onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => SettingUserInfoPage())),
-                    )),
-              ) : Container(),
-              SizedBox(height: 10),
-              currentUser.role == 'admin' ? Center(
-                child: Container(
-                    width: 200,
-                    child: RaisedButton(
-                      color: Colors.teal,
-                      child: Text(
-                        '학년 일괄수정 (관리자용)',
-                        style: GoogleFonts.montserrat(
-                            fontSize: 15,
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold),
-                      ),
-                      onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => SettingUserGradeInfoPage())),
-                    )),
-              ) : Container(),
+              currentUser.role == 'admin' ? onlyAdminMenu() : Container(),
             ],
           );
         });
+  }
+
+  onlyAdminMenu () {
+    return Column(
+      children: [
+        SizedBox(height: 10),
+        Divider(thickness: 3,),
+        SizedBox(height: 10),
+        Container(alignment: Alignment.center,child: Text("관리자 메뉴", style: TextStyle(fontSize: 20, color: Colors.grey))),
+        SizedBox(height: 10),
+        Center(
+          child: Container(
+              width: 200,
+              child: RaisedButton(
+                color: Colors.blueGrey,
+                child: Text(
+                  '가입 승인 (관리자용)',
+                  style: GoogleFonts.montserrat(
+                      fontSize: 15,
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold),
+                ),
+                onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => SettingUserInfoPage())),
+              )),
+        ),
+        SizedBox(height: 10),
+        Center(
+          child: Container(
+              width: 200,
+              child: RaisedButton(
+                color: Colors.blueGrey,
+                child: Text(
+                  '학생 정보수정 (관리자용)',
+                  style: GoogleFonts.montserrat(
+                      fontSize: 15,
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold),
+                ),
+                onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => EditUserInfoPage())),
+              )),
+        ),
+        SizedBox(height: 10),
+        Center(
+          child: Container(
+              width: 200, child: RaisedButton(
+                color: Colors.blueGrey,
+                child: Text(
+                  '학년 일괄수정 (관리자용)',
+                  style: GoogleFonts.montserrat(
+                      fontSize: 15,
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold),
+                ),
+                onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => SettingUserGradeInfoPage())),
+              )),
+        ),
+      ],
+    );
   }
 
   @override
@@ -334,7 +362,7 @@ class _MyInfoPageState extends State<MyInfoPage> {
                 borderRadius: BorderRadius.circular(10),
               ),
               alignment: Alignment.center,
-              child: EditProfilePage(currentUserId: currentUserId)
+              child: EditProfilePage(currentUserId: currentUserId, byAdmin: false,)
           ),
         );
       },
