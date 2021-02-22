@@ -90,7 +90,7 @@ class SignInPageWithUserIdState extends State<SignInPageWithUserId> {
 
     // 수험번호가 잘못 입력된 경우
     if(dbPassword == 'ID error') {
-      checkIdPasswordPopup('수험번호 확인', "수험번호가 잘못 입력되었습니다.");
+      checkIdPasswordPopup('수험번호 확인', "존재하지 않는 수험번호입니다.");
     } else if (password != dbPassword){
       checkIdPasswordPopup('비밀번호 확인', "비밀번호가 잘못 입력되었습니다.");
     } else {

@@ -285,12 +285,6 @@ class _UserInfoTileState extends State<UserInfoTile> {
                 onPressed: () async {
                   // 유저 정보 상세페이지로 이동 (수정 가능토록)
                   _showEditProfileDialog(context);
-                  // final result = await Navigator.push(
-                  //   context,
-                  //   MaterialPageRoute(
-                  //       builder: (context) => EditProfilePageByAdmin(
-                  //           currentOnlineUserId: widget.searchUser.id)),
-                  // );
                 },
                 child: Icon(Icons.edit, color: Colors.white,),
               )

@@ -12,14 +12,14 @@ class CurrentUser extends DatabaseItem {
   DateTime createdAt;
 
   CurrentUser(
-      { this.id,
-         this.password,
-         this.grade,
-        this.name,
-        this.phoneNumber,
-         this.validateByAdmin,
-         this.role,
-         this.createdAt})
+      {this.id,
+      this.password,
+      this.grade,
+      this.name,
+      this.phoneNumber,
+      this.validateByAdmin,
+      this.role,
+      this.createdAt})
       : super(id);
 
   factory CurrentUser.fromDocument(DocumentSnapshot doc) {
@@ -29,7 +29,8 @@ class CurrentUser extends DatabaseItem {
         password: getDocs["password"],
         grade: getDocs["grade"],
         name: getDocs["name"] != null ? getDocs["name"] : "-",
-        phoneNumber: getDocs["phoneNumber"] != null ? getDocs["phoneNumber"] : "-",
+        phoneNumber:
+            getDocs["phoneNumber"] != null ? getDocs["phoneNumber"] : "-",
         validateByAdmin: getDocs["validateByAdmin"],
         role: getDocs["role"],
         createdAt: getDocs["createdAt"].toDate());
