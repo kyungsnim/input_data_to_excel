@@ -10,6 +10,7 @@ import 'package:flutter_mailer/flutter_mailer.dart';
 import 'package:input_data_to_excel/models/CourseModel.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:input_data_to_excel/views/EditCoursePage.dart';
 import 'package:path_provider/path_provider.dart';
 
 import 'package:table_calendar/table_calendar.dart';
@@ -299,7 +300,7 @@ class _CourseSubmitPageState extends State<CourseSubmitPage> {
                   ? FlatButton(
                       child: Container(
                         padding: const EdgeInsets.all(16),
-                        child: Text('전송',
+                        child: Text('엑셀전송',
                             style: GoogleFonts.montserrat(
                                 color: Colors.red, fontSize: 20)),
                       ),
@@ -311,6 +312,19 @@ class _CourseSubmitPageState extends State<CourseSubmitPage> {
                       },
                     )
                   : Container(),
+              currentUser.role == 'admin'
+                  ? FlatButton(
+                child: Container(
+                  padding: const EdgeInsets.all(16),
+                  child: Text('과제수정',
+                      style: GoogleFonts.montserrat(
+                          color: Colors.redAccent, fontSize: 20)),
+                ),
+                onPressed: () async {
+                  //
+                  _showEditCourseDialog(context, event);
+                },
+              ) : Container(),
               FlatButton(
                 child: Container(
                   padding: const EdgeInsets.all(16),
@@ -351,6 +365,50 @@ class _CourseSubmitPageState extends State<CourseSubmitPage> {
             ],
           );
         });
+  }
+
+  void _showEditCourseDialog(context, courseInfo) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('정보 수정',
+              style: GoogleFonts.montserrat(
+                  fontWeight: FontWeight.bold,
+                  color: Colors.blueAccent,
+                  fontSize: 18)),
+          actionsPadding: EdgeInsets.only(right: 10),
+          elevation: 0.0,
+          shape:
+          RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
+          content: Container(
+              width: MediaQuery
+                  .of(context)
+                  .size
+                  .width * 1,
+              height: MediaQuery
+                  .of(context)
+                  .size
+                  .height * 1,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10),
+              ),
+              alignment: Alignment.center,
+              child: EditCoursePage(
+                id: courseInfo.id,
+                courseName: courseInfo.courseName,
+                courseNumber: courseInfo.courseNumber,
+              courseGrade: courseInfo.courseGrade,
+              courseDate: courseInfo.courseDate,
+              firstDueDate: courseInfo.firstDueDate,
+              secondDueDate: courseInfo.secondDueDate,
+              thirdDueDate: courseInfo.thirdDueDate,), )
+              // EditProfilePage(
+              //     currentUserId: widget.searchUser.id, byAdmin: true)),
+        );
+      },
+    );
   }
 
   submitDeletePopup(event) async {
@@ -511,7 +569,7 @@ class _CourseSubmitPageState extends State<CourseSubmitPage> {
       37,
       38,
       39,
-      30,
+      40,
       41,
       42,
       43,
@@ -578,24 +636,6 @@ class _CourseSubmitPageState extends State<CourseSubmitPage> {
     UploadTask uploadTask = levelTestRef.putFile(f);
     // 실제 파일 업로드 (중간에 중단, 취소 등 하지 않을 것이므로 최대한 심플하게 가보자.)
     await uploadTask.whenComplete(() => showToast('파일 업로드 완료', duration: 2));
-    // } else {
-    //   // 이메일 전송 테스트
-    //   final MailOptions mailOptions = MailOptions(
-    //     body:
-    //         event.courseName + event.courseNumber + ' 과제에 대한 엑셀 취합내용 메일 전송입니다.',
-    //     subject:
-    //         '${event.courseName}-${event.courseNumber}_${event.courseGrade}_${event.courseDate.year}년${event.courseDate.month}월${event.courseDate.day}일',
-    //     recipients: ['skyboom86@gmail.com'],
-    //     isHTML: false,
-    //     // bccRecipients: ['other@example.com'],
-    //     // ccRecipients: ['third@example.com'],
-    //     attachments: [
-    //       filePath,
-    //     ],
-    //   );
-    //
-    //   await FlutterMailer.send(mailOptions);
-    // }
     Navigator.pop(context);
   }
 

@@ -1,14 +1,35 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:toast/toast.dart';
 
 import 'HomePage.dart';
 
-class AddCoursePage extends StatefulWidget {
+class EditCoursePage extends StatefulWidget {
+  final String id;
+  final String courseName;
+  final String courseNumber;
+  final String courseGrade;
+  final DateTime courseDate;
+  final DateTime firstDueDate;
+  final DateTime secondDueDate;
+  final DateTime thirdDueDate;
+
+  EditCoursePage({
+    this.id,
+    this.courseName,
+    this.courseNumber,
+    this.courseGrade,
+    this.courseDate,
+    this.firstDueDate,
+    this.secondDueDate,
+    this.thirdDueDate
+  });
+
   @override
-  _AddCoursePageState createState() => _AddCoursePageState();
+  _EditCoursePageState createState() => _EditCoursePageState();
 }
 
-class _AddCoursePageState extends State<AddCoursePage> {
+class _EditCoursePageState extends State<EditCoursePage> {
   TextStyle style = GoogleFonts.montserrat(fontSize: 20.0);
   TextEditingController _courseName;
   var _courseNumber;
@@ -87,23 +108,19 @@ class _AddCoursePageState extends State<AddCoursePage> {
   void initState() {
     super.initState();
 
-    _courseName = TextEditingController(text: "");
-    _courseNumber = '1-1회';
-    _courseGrade = '중학교 1학년';
-    _courseDate = DateTime.now();
-    _firstDueDate = DateTime.now();
-    _secondDueDate = DateTime.now();
-    _thirdDueDate = DateTime.now();
+    _courseName = TextEditingController(text: widget.courseName);
+    _courseNumber = widget.courseNumber;
+    _courseGrade = widget.courseGrade;
+    _courseDate = widget.courseDate;
+    _firstDueDate = widget.firstDueDate;
+    _secondDueDate = widget.secondDueDate;
+    _thirdDueDate = widget.thirdDueDate;
     processing = false;
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.blueGrey,
-        title: Text("과제 추가"),
-      ),
       key: _key,
       body: Form(
         key: _formKey,
@@ -500,11 +517,8 @@ class _AddCoursePageState extends State<AddCoursePage> {
                               setState(() {
                                 processing = true;
                               });
-                              var id = DateTime.now()
-                                  .microsecondsSinceEpoch
-                                  .toString();
-                              await courseReference.doc(id).set({
-                                "id": id,
+                              await courseReference.doc(widget.id).update({
+                                "id": widget.id,
                                 "courseName": _courseName.text,
                                 "courseNumber": _courseNumber,
                                 "courseGrade": _courseGrade,
@@ -514,14 +528,16 @@ class _AddCoursePageState extends State<AddCoursePage> {
                                 "thirdDueDate": _thirdDueDate,
                               });
 
-                              Navigator.pop(context);
+                              Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => HomePage(0)));
+
+                              showToast("과제 변경 완료", duration: 2);
                               setState(() {
                                 processing = false;
                               });
                             }
                           },
                           child: Text(
-                            "과제 생성",
+                            "과제 수정",
                             style: style.copyWith(
                                 color: Colors.white,
                                 fontWeight: FontWeight.bold),
@@ -535,6 +551,10 @@ class _AddCoursePageState extends State<AddCoursePage> {
         ),
       ),
     );
+  }
+
+  showToast(String msg, {int duration, int gravity}) {
+    Toast.show(msg, context, duration: duration, gravity: gravity);
   }
 
   @override

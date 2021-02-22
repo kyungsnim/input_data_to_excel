@@ -3,6 +3,7 @@ import 'package:input_data_to_excel/widgets/JJHBody.dart';
 import 'package:input_data_to_excel/widgets/LoginButton.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:multi_masked_formatter/multi_masked_formatter.dart';
 
 class SignUpPageWithUserId extends StatefulWidget {
   @override
@@ -12,7 +13,10 @@ class SignUpPageWithUserId extends StatefulWidget {
 class SignUpPageWithUserIdState extends State<SignUpPageWithUserId> {
   DatabaseService ds = DatabaseService();
   TextEditingController _userIdController = TextEditingController();
+  TextEditingController _nameController = TextEditingController();
+  TextEditingController _phoneNumberController = TextEditingController();
   TextEditingController _passwordController = TextEditingController();
+  TextEditingController _confirmPasswordController = TextEditingController();
   final gradeList = [
     "중학교 1학년",
     "중학교 2학년",
@@ -21,7 +25,7 @@ class SignUpPageWithUserIdState extends State<SignUpPageWithUserId> {
     "고등학교 2학년",
     "고등학교 3학년",
   ];
-  String userId, password; // 수험번호, 비밀번호;
+  String userId, name, phoneNumber, password; // 수험번호, 비밀번호;
   var grade; // 학년
   final _formKey = GlobalKey<FormState>();
   final _scaffoldKey = GlobalKey<ScaffoldState>();
@@ -39,7 +43,10 @@ class SignUpPageWithUserIdState extends State<SignUpPageWithUserId> {
   @override
   void dispose() {
     _userIdController.dispose();
+    _nameController.dispose();
+    _phoneNumberController.dispose();
     _passwordController.dispose();
+    _confirmPasswordController.dispose();
     super.dispose();
   }
 
@@ -84,11 +91,25 @@ class SignUpPageWithUserIdState extends State<SignUpPageWithUserId> {
             height: MediaQuery.of(context).size.height * 1,
           ),
           Container(
-              alignment: Alignment.topCenter,
+              alignment: Alignment.center,
               child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    jjhBody(context),
+                    SizedBox(height: MediaQuery.of(context).size.height * 0.1),
+                    Center(
+                      child: Text(
+                        '회원 가입',
+                        style: GoogleFonts.montserrat(
+                            fontSize: MediaQuery.of(context).size.width * 0.1,
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            shadows: [
+                              Shadow(offset: Offset(1, 2), blurRadius: 3, color: Colors.black)
+                            ]
+                        ),
+                      ),
+                    ),
+                    // SizedBox(height: 40),
                     Spacer(),
                     Form(
                       key: _formKey,
@@ -144,6 +165,154 @@ class SignUpPageWithUserIdState extends State<SignUpPageWithUserId> {
                           Container(
                             alignment: Alignment.center,
                             decoration: BoxDecoration(
+                                border: Border.all(color: Colors.green.withOpacity(0.5)),
+                                borderRadius: BorderRadius.circular(10),
+                                color: Colors.white,
+                                boxShadow: [
+                                  BoxShadow(offset: Offset(1, 1), blurRadius: 5, color: Colors.white24)
+                                ]
+                            ),
+                            width: MediaQuery.of(context).size.width * 0.8,
+                            height: MediaQuery.of(context).size.height * 0.07,
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 10),
+                              child: Row(
+                                children: [
+                                  Icon(Icons.person, color: Colors.green),
+                                  SizedBox(width: 15),
+                                  Expanded(
+                                    flex: 1,
+                                    child: TextFormField(
+                                      controller: _nameController,
+                                      cursorColor: Colors.green,
+                                      validator: (val) {
+                                        if (val.isEmpty) {
+                                          return '이름을 입력하세요';
+                                        } else {
+                                          return null;
+                                        }
+                                      },
+                                      decoration: InputDecoration(
+                                          border: InputBorder.none,
+                                          hintText: '이름',
+                                          hintStyle: GoogleFonts.montserrat(fontSize: 18)),
+                                      onChanged: (val) {
+                                        name = val;
+                                      },
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                          SizedBox(height: 10),
+                          Container(
+                            alignment: Alignment.center,
+                            decoration: BoxDecoration(
+                                border: Border.all(color: Colors.green.withOpacity(0.5)),
+                                borderRadius: BorderRadius.circular(10),
+                                color: Colors.white,
+                                boxShadow: [
+                                  BoxShadow(offset: Offset(1, 1), blurRadius: 5, color: Colors.white24)
+                                ]
+                            ),
+                            width: MediaQuery.of(context).size.width * 0.8,
+                            height: MediaQuery.of(context).size.height * 0.07,
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 10),
+                              child: Row(
+                                children: [
+                                  Icon(Icons.phone, color: Colors.green),
+                                  SizedBox(width: 15),
+                                  Expanded(
+                                    flex: 1,
+                                    child: TextFormField(
+                                      inputFormatters: [
+                                        MultiMaskedTextInputFormatter(
+                                            masks: ['xxx-xxxx-xxxx', 'xxx-xxx-xxxx'], separator: '-')
+                                      ],
+                                      keyboardType: TextInputType.number,
+                                      controller: _phoneNumberController,
+                                      cursorColor: Colors.green,
+                                      validator: (val) {
+                                        if (val.isEmpty) {
+                                          return '휴대폰 번호을 입력하세요';
+                                        } else {
+                                          print('val : $val');
+                                          return null;
+                                        }
+                                      },
+                                      decoration: InputDecoration(
+                                          border: InputBorder.none,
+                                          hintText: '휴대폰번호',
+                                          hintStyle: GoogleFonts.montserrat(fontSize: 18)),
+                                      onChanged: (val) {
+                                        phoneNumber = val;
+                                      },
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                          SizedBox(height: 10),
+                          Container(
+                            alignment: Alignment.center,
+                            decoration: BoxDecoration(
+                                border:
+                                Border.all(color: Colors.green.withOpacity(0.5)),
+                                borderRadius: BorderRadius.circular(10),
+                                color: Colors.white,
+                                boxShadow: [
+                                  BoxShadow(
+                                      offset: Offset(1, 1),
+                                      blurRadius: 5,
+                                      color: Colors.white24)
+                                ]),
+                            width: MediaQuery.of(context).size.width * 0.8,
+                            height: MediaQuery.of(context).size.height * 0.07,
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 10),
+                              child: Row(
+                                children: [
+                                  Icon(Icons.perm_contact_cal_outlined,
+                                      color: Colors.green),
+                                  SizedBox(width: 15),
+                                  Expanded(
+                                    flex: 1,
+                                    child: DropdownButton(
+                                        hint: Text(
+                                          '학년 선택',
+                                          style: TextStyle(fontSize: 18),
+                                        ),
+                                        value: grade,
+                                        icon: Icon(Icons.arrow_downward),
+                                        underline: Container(
+                                          height: 1,
+                                          color: Colors.white,
+                                        ),
+                                        items: gradeList.map((value) {
+                                          return DropdownMenuItem(
+                                            value: value,
+                                            child: Text("$value",
+                                                style: GoogleFonts.montserrat(
+                                                    fontSize: 15)),
+                                          );
+                                        }).toList(),
+                                        onChanged: (value) {
+                                          setState(() {
+                                            grade = value;
+                                          });
+                                        }),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                          SizedBox(height: 10),
+                          Container(
+                            alignment: Alignment.center,
+                            decoration: BoxDecoration(
                                 border: Border.all(
                                     color: Colors.green.withOpacity(0.5)),
                                 borderRadius: BorderRadius.circular(10),
@@ -158,7 +327,7 @@ class SignUpPageWithUserIdState extends State<SignUpPageWithUserId> {
                             height: MediaQuery.of(context).size.height * 0.07,
                             child: Padding(
                               padding:
-                                  const EdgeInsets.symmetric(horizontal: 10),
+                              const EdgeInsets.symmetric(horizontal: 10),
                               child: TextFormField(
                                 controller: _passwordController,
                                 obscureText: true,
@@ -179,7 +348,55 @@ class SignUpPageWithUserIdState extends State<SignUpPageWithUserId> {
                                         color: Colors.green),
                                     hintText: '비밀번호',
                                     hintStyle:
-                                        GoogleFonts.montserrat(fontSize: 18)),
+                                    GoogleFonts.montserrat(fontSize: 18)),
+                                onChanged: (val) {
+                                  password = val;
+                                },
+                              ),
+                            ),
+                          ),
+                          SizedBox(height: 10),
+                          Container(
+                            alignment: Alignment.center,
+                            decoration: BoxDecoration(
+                                border: Border.all(
+                                    color: Colors.green.withOpacity(0.5)),
+                                borderRadius: BorderRadius.circular(10),
+                                color: Colors.white,
+                                boxShadow: [
+                                  BoxShadow(
+                                      offset: Offset(1, 1),
+                                      blurRadius: 5,
+                                      color: Colors.white24)
+                                ]),
+                            width: MediaQuery.of(context).size.width * 0.8,
+                            height: MediaQuery.of(context).size.height * 0.07,
+                            child: Padding(
+                              padding:
+                              const EdgeInsets.symmetric(horizontal: 10),
+                              child: TextFormField(
+                                controller: _confirmPasswordController,
+                                obscureText: true,
+                                cursorColor: Colors.green,
+                                validator: (val) {
+                                  setState(() {
+                                    isLoading = false;
+                                  });
+                                  if (val.length < 4) {
+                                    return '4자 이상의 비밀번호를 사용하세요.';
+                                  } else if (_passwordController.text != _confirmPasswordController.text){
+                                    return '비밀번호 입력이 잘못되었습니다.';
+                                  } else {
+                                    return val.isEmpty ? '비밀번호를 입력하세요' : null;
+                                  }
+                                },
+                                decoration: InputDecoration(
+                                    border: InputBorder.none,
+                                    icon: Icon(Icons.vpn_key_outlined,
+                                        color: Colors.green),
+                                    hintText: '비밀번호 확인',
+                                    hintStyle:
+                                    GoogleFonts.montserrat(fontSize: 18)),
                                 onChanged: (val) {
                                   password = val;
                                 },
@@ -189,61 +406,8 @@ class SignUpPageWithUserIdState extends State<SignUpPageWithUserId> {
                         ],
                       ),
                     ),
-                    SizedBox(height: 10),
-                    Container(
-                      alignment: Alignment.center,
-                      decoration: BoxDecoration(
-                          border:
-                              Border.all(color: Colors.green.withOpacity(0.5)),
-                          borderRadius: BorderRadius.circular(10),
-                          color: Colors.white,
-                          boxShadow: [
-                            BoxShadow(
-                                offset: Offset(1, 1),
-                                blurRadius: 5,
-                                color: Colors.white24)
-                          ]),
-                      width: MediaQuery.of(context).size.width * 0.8,
-                      height: MediaQuery.of(context).size.height * 0.07,
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 10),
-                        child: Row(
-                          children: [
-                            Icon(Icons.perm_contact_cal_outlined,
-                                color: Colors.green),
-                            SizedBox(width: 15),
-                            Expanded(
-                              flex: 1,
-                              child: DropdownButton(
-                                  hint: Text(
-                                    '학년 선택',
-                                    style: TextStyle(fontSize: 18),
-                                  ),
-                                  value: grade,
-                                  icon: Icon(Icons.arrow_downward),
-                                  underline: Container(
-                                    height: 1,
-                                    color: Colors.white,
-                                  ),
-                                  items: gradeList.map((value) {
-                                    return DropdownMenuItem(
-                                      value: value,
-                                      child: Text("$value",
-                                          style: GoogleFonts.montserrat(
-                                              fontSize: 15)),
-                                    );
-                                  }).toList(),
-                                  onChanged: (value) {
-                                    setState(() {
-                                      grade = value;
-                                    });
-                                  }),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    SizedBox(height: MediaQuery.of(context).size.height * 0.1),
+
+                    SizedBox(height: MediaQuery.of(context).size.height * 0.05),
                     isLoading == true
                         ? Column(
                             children: [

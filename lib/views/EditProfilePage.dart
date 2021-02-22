@@ -229,6 +229,17 @@ class _EditProfilePageState extends State<EditProfilePage> {
                     children: [
                       InkWell(
                         onTap: () {
+                          checkDeletePopup(currentUser.id);
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.all(16),
+                          child: Text('회원삭제',
+                              style: GoogleFonts.montserrat(
+                                  color: Colors.redAccent, fontSize: 18)),
+                        ),
+                      ),
+                      InkWell(
+                        onTap: () {
                           if(_formKey.currentState.validate()) {
                             updateUserData();
                             widget.byAdmin ? Navigator.pop(context) : Navigator.pushReplacement(
@@ -261,6 +272,47 @@ class _EditProfilePageState extends State<EditProfilePage> {
               ],
             ),
                 )));
+  }
+
+  checkDeletePopup(id) async {
+    await showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('회원 삭제'),
+            content: Text("해당 학생을 삭제하시겠습니까?",
+                style: TextStyle(color: Colors.redAccent)),
+            actions: [
+              FlatButton(
+                child: Container(
+                  padding: const EdgeInsets.all(16),
+                  child: Text('확인',
+                      style: GoogleFonts.montserrat(
+                          color: Colors.blueAccent, fontSize: 20)),
+                ),
+                onPressed: () async {
+                  await userReference
+                      .doc(id)
+                      .delete();
+                  showToast("회원 삭제 완료");
+                  Navigator.pop(context); // 회원 삭제 확인 팝업 닫기
+                  Navigator.pop(context); // 회원 정보 수정 팝업 닫기
+                },
+              ),
+              FlatButton(
+                child: Container(
+                  padding: const EdgeInsets.all(16),
+                  child: Text('취소',
+                      style: GoogleFonts.montserrat(
+                          color: Colors.grey, fontSize: 20)),
+                ),
+                onPressed: () async {
+                  Navigator.pop(context);
+                },
+              ),
+            ],
+          );
+        });
   }
 
   updateUserData() async {

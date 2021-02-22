@@ -6,8 +6,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:input_data_to_excel/views/HomePage.dart';
 import 'package:toast/toast.dart';
 
-enum SelectedRadio { username, phoneNumber }
-
 class SettingUserGradeInfoPage extends StatefulWidget {
   @override
   _SettingUserGradeInfoPageState createState() =>

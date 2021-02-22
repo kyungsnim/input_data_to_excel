@@ -100,11 +100,11 @@ class DatabaseService {
         .snapshots();
   }
   // 이름검색 유저목록 가져오기
-  getUserInfoListByUsername(username) async {
+  getUserInfoListByUsername(name) async {
     return FirebaseFirestore.instance
         .collection("users")
-        // .where('profileName', isEqualTo: username)
-        .orderBy('profileName').startAt([username]).endAt([username+'\uf8ff'])
+        // .where('name', isEqualTo: name)
+        .orderBy('name').startAt([name.toString().trim()]).endAt([name.toString().trim()+'\uf8ff'])
         .snapshots();
   }
 

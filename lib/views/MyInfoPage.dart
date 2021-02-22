@@ -1,6 +1,8 @@
 // @dart=2.9
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:input_data_to_excel/LoginPage/SignInPageWithUserId.dart';
 import 'package:input_data_to_excel/models/CurrentUser.dart';
+import 'package:input_data_to_excel/views/ExportUserInfoPage.dart';
 import 'package:input_data_to_excel/views/SettingUserInfoPage.dart';
 import 'package:input_data_to_excel/widgets/ProgressWidget.dart';
 import 'package:flutter/material.dart';
@@ -203,6 +205,26 @@ class _MyInfoPageState extends State<MyInfoPage> {
                 ),
                 onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => SettingUserGradeInfoPage())),
               )),
+        ),
+        SizedBox(height: 10),
+        Center(
+          child: Container(
+              width: 200, child: RaisedButton(
+            color: Colors.blueGrey,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  '학생 엑셀추출 (관리자용)',
+                  style: GoogleFonts.montserrat(
+                      fontSize: 15,
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold),
+                ),
+              ],
+            ),
+            onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => ExportUserInfoPage())),
+          )),
         ),
       ],
     );

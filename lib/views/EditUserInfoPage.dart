@@ -6,6 +6,8 @@ import 'package:input_data_to_excel/res/database.dart';
 
 import 'EditProfilePage.dart';
 
+enum SelectedRadio { username, id }
+
 class EditUserInfoPage extends StatefulWidget {
   @override
   _EditUserInfoPageState createState() => _EditUserInfoPageState();
@@ -13,7 +15,8 @@ class EditUserInfoPage extends StatefulWidget {
 
 class _EditUserInfoPageState extends State<EditUserInfoPage> {
   DatabaseService databaseService = new DatabaseService();
-
+  //
+  SelectedRadio _selectedRadio = SelectedRadio.username;
   // 유저목록
   QuerySnapshot userInfoSnapshot;
   Stream userInfoStream;
@@ -25,6 +28,7 @@ class _EditUserInfoPageState extends State<EditUserInfoPage> {
 
   @override
   void initState() {
+    _selectedRadio = SelectedRadio.username;
     super.initState();
   }
 
@@ -129,7 +133,36 @@ class _EditUserInfoPageState extends State<EditUserInfoPage> {
         children: [
           Row(
             children: [
-              Text('수험번호',
+              Text('검색타입', style: TextStyle(color: Colors.blueAccent, fontSize: 18, fontWeight: FontWeight.bold)),
+              SizedBox(width: 20),
+              Text('이름', style: TextStyle(fontSize: 15,)),
+              Radio(
+                value: SelectedRadio.username,
+                groupValue: _selectedRadio,
+                activeColor: Colors.blueAccent,
+                onChanged: (SelectedRadio value) {
+                  setState(() {
+                    _selectedRadio = value;
+                  });
+                },
+              ),
+              SizedBox(width: 20),
+              Text('수험번호', style: TextStyle(fontSize: 15,)),
+              Radio(
+                value: SelectedRadio.id,
+                groupValue: _selectedRadio,
+                activeColor: Colors.blueAccent,
+                onChanged: (SelectedRadio value) {
+                  setState(() {
+                    _selectedRadio = value;
+                  });
+                },
+              ),
+            ],
+          ),
+          Row(
+            children: [
+              Text('검색어',
                   style: TextStyle(
                       color: Colors.blueAccent,
                       fontSize: 18,
@@ -157,16 +190,30 @@ class _EditUserInfoPageState extends State<EditUserInfoPage> {
                   });
                   FocusScope.of(context)
                       .requestFocus(new FocusNode()); // 키보드 감추기
-                  databaseService
-                      .getUserInfoListById(_searchValueController.text)
-                      .then((val) {
-                    if (mounted) {
-                      setState(() {
-                        userInfoStream = val;
-                        isLoading = false;
-                      });
-                    }
-                  });
+                  print('_searchValueController.text : ${_searchValueController.text}');
+                  if(_selectedRadio == SelectedRadio.username) {
+                    databaseService
+                        .getUserInfoListByUsername(_searchValueController.text)
+                        .then((val) {
+                      if (mounted) {
+                        setState(() {
+                          userInfoStream = val;
+                          isLoading = false;
+                        });
+                      }
+                    });
+                  } else {
+                    databaseService
+                        .getUserInfoListById(_searchValueController.text)
+                        .then((val) {
+                      if (mounted) {
+                        setState(() {
+                          userInfoStream = val;
+                          isLoading = false;
+                        });
+                      }
+                    });
+                  }
                 },
               )
             ],
