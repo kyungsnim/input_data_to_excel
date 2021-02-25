@@ -43,6 +43,7 @@ dependencies:
   flutter_launcher_icons: ^0.7.3
   multi_masked_formatter: ^0.1.1
   font_awesome_flutter: ^8.11.0
+  logger: ^0.9.4
 #  firebase_auth:
 #  firebase_auth_web:
 #  firebase_admob:

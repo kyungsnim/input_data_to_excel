@@ -110,6 +110,7 @@ class _SettingUserInfoPageState extends State<SettingUserInfoPage> {
 
   @override
   Widget build(BuildContext context) {
+    logger.d('SettingUserInfoPage : 최초가입자 승인 페이지');
     return SafeArea(
       child: Scaffold(
           appBar: AppBar(

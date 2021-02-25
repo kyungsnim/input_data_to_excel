@@ -135,6 +135,7 @@ class _SettingUserGradeInfoPageState extends State<SettingUserGradeInfoPage> {
 
   @override
   Widget build(BuildContext context) {
+    logger.d('SettingUserGradeInfoPage : 학년 일괄수정 페이지');
     return SafeArea(
       child: Scaffold(
           appBar: AppBar(

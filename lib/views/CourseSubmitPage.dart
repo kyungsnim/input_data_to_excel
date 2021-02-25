@@ -525,9 +525,22 @@ class _CourseSubmitPageState extends State<CourseSubmitPage> {
     var cloud =
         await courseReference.doc(event.id).collection('SubmitUsers').get();
 
+    // 해당 과제 학년의 모든 학생 정보 가져오기
+    var userCloud = await userReference.where('grade', isEqualTo: event.courseGrade).get();
+
+    // 해당과제 학년의 모든 학생 정보 과제제출 false 값으로 초기화
+    List<List<dynamic>> summitUserList = new List(userCloud.docs.length);
+    for(int i = 0; i < summitUserList.length; i++) {
+      summitUserList[i] = List(2);
+      summitUserList[i][0] = userCloud.docs[i].data()['id'].toString();
+      summitUserList[i][1] = false;
+    }
+
     raw = [
-      "수험번호".toString(),
+      "과제명".toString(),
+      "과제회차".toString(),
       "제출차수".toString(),
+      "수험번호".toString(),
       "이름".toString(),
       "휴대폰".toString(),
       1,
@@ -585,13 +598,20 @@ class _CourseSubmitPageState extends State<CourseSubmitPage> {
     // 최상단에 셋팅
     sheetObject.insertRowIterables(raw, 0);
 
+    // 제출한 학생수 카운트용
+    var summitUserCount = 0;
+
     if (cloud.docs != null) {
       for (int i = 0; i < cloud.docs.length; i++) {
         List<dynamic> row = List<dynamic>();
-        // 수험번호 넣기
-        row.add(int.parse(cloud.docs[i].data()['id']));
+        // 과제명 넣기
+        row.add(cloud.docs[i].data()['courseName'].toString());
+        // 과제회차 넣기
+        row.add(cloud.docs[i].data()['courseNumber'].toString());
         // 제출차수 넣기
         row.add(cloud.docs[i].data()['submitDegree'].toString());
+        // 수험번호 넣기
+        row.add(int.parse(cloud.docs[i].data()['id']));
         // 이름 넣기
         row.add(cloud.docs[i].data()['name'].toString());
         // 휴대폰번호 넣기
@@ -604,7 +624,44 @@ class _CourseSubmitPageState extends State<CourseSubmitPage> {
             row.add(cloud.docs[i].data()['answer'][j]);
           }
         }
+
+        for(int j = 0; j < summitUserList.length; j++) {
+          // 모든 학생 뒤지면서 해당 id를 찾으면 true(제출)값으로 변경
+          if(cloud.docs[i].data()['id'] == summitUserList[j][0]) {
+            summitUserList[j][1] = true;
+          }
+        }
+
         sheetObject.insertRowIterables(row, i + 1);
+        summitUserCount++;
+      }
+
+      // 과제제출 안한 학생들 정보 추가로 넣기
+      for(int i = 0; i < summitUserList.length; i++){
+        // 제출값이 false인 경우
+        if(!summitUserList[i][1]) {
+          List<dynamic> row = List<dynamic>();
+          // 과제명 넣기
+          row.add(event.courseName.toString());
+          // 과제회차 넣기
+          row.add(event.courseNumber.toString());
+          // 제출차수 넣기
+          row.add("-");
+          // 수험번호 넣기
+          row.add(int.parse(userCloud.docs[i].data()['id']));
+          // 이름 넣기
+          row.add(userCloud.docs[i].data()['name'].toString());
+          // 휴대폰번호 넣기
+          row.add(userCloud.docs[i].data()['phoneNumber'].toString());
+
+          // 제출한 가장 마지막 학생 다음 줄부터 추가
+          if(summitUserCount == 0) {
+            sheetObject.insertRowIterables(row, i + 1);
+          } else {
+            sheetObject.insertRowIterables(row, summitUserCount + i);
+          }
+        }
+
       }
 
       // Save the Changes in file

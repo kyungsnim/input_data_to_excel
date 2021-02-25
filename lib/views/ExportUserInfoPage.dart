@@ -39,6 +39,7 @@ class _ExportUserInfoPageState extends State<ExportUserInfoPage> {
 
   @override
   Widget build(BuildContext context) {
+    logger.d('ExportUserInfoPage : 학생 엑셀추출 페이지');
     return SafeArea(
       child: Scaffold(
           appBar: AppBar(

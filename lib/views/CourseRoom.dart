@@ -187,6 +187,8 @@ class _CourseRoomState extends State<CourseRoom> {
         .doc(currentUser.id)
         .set({
       "id": currentUser.id,
+      "courseName": widget.event.courseName,
+      "courseNumber": widget.event.courseNumber,
       "submitDegree": checkDegree,
       "name": currentUser.name,
       "phoneNumber": currentUser.phoneNumber,

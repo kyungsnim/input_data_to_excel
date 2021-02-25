@@ -26,8 +26,10 @@ class _EditProfilePageState extends State<EditProfilePage> {
   CurrentUser currentUser;
   final gradeList = ["중학교 1학년", "중학교 2학년","중학교 3학년","고등학교 1학년","고등학교 2학년","고등학교 3학년",];
   var grade; // 학년
+  var userId; // 수험번호
   var name; // 이름
   var phoneNumber; // 휴대폰번호
+  TextEditingController userIdController = TextEditingController();
   TextEditingController nameController = TextEditingController();
   TextEditingController phoneNumberController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
@@ -35,7 +37,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
   @override
   void initState() {
     super.initState();
-
+    print('>>>>>>>>>>>>> currentUserId : ${widget.currentUserId}');
     // 화면 빌드 전 미리 해당 사용자의 값들로 셋팅해주자
     getAndDisplayUserInformation();
   }
@@ -43,6 +45,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
   @override
   void dispose() {
     super.dispose();
+    userIdController.dispose();
     nameController.dispose();
     phoneNumberController.dispose();
   }
@@ -60,6 +63,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
     setState(() {
       loading = false;
       grade = currentUser.grade;
+      userIdController.text = currentUser.id;
+      userId = userIdController.text;
       nameController.text = currentUser.name == "-" ? "" : currentUser.name; // 이름 설정 안한 상태면 비어두고 설정 해두었으면 설정값 불러오기
       phoneNumberController.text = currentUser.phoneNumber == "-" ? "" : currentUser.phoneNumber; // 휴대폰번호 설정 안한 상태면 비어두고 설정 해두었으면 설정값 불러오기
       name = nameController.text;
@@ -69,6 +74,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
   @override
   Widget build(BuildContext context) {
+    logger.d('EditUserInfoPage : 정보 수정 페이지');
     return Scaffold(
         key: _scaffoldGlobalKey,
         body: loading
@@ -125,7 +131,51 @@ class _EditProfilePageState extends State<EditProfilePage> {
                     ),
                   ) : Container(),
                   SizedBox(height: 10),
-                  Container(
+                widget.byAdmin ? Container(
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                      border: Border.all(
+                          color: Colors.blueAccent.withOpacity(0.5)),
+                      borderRadius: BorderRadius.circular(10),
+                      color: Colors.white,
+                      boxShadow: [
+                        BoxShadow(
+                            offset: Offset(1, 1),
+                            blurRadius: 5,
+                            color: Colors.white24)
+                      ]),
+                  width: MediaQuery.of(context).size.width * 0.8,
+                  height: MediaQuery.of(context).size.height * 0.07,
+                  child: Padding(
+                    padding:
+                    const EdgeInsets.symmetric(horizontal: 10),
+                    child: TextFormField(
+                      controller: userIdController,
+                      cursorColor: Colors.blueAccent,
+                      validator: (val) {
+                        if (val.isEmpty) {
+                          return '수험번호를 입력하세요';
+                        } else if (val.length != 6) {
+                          return '수험번호는 6자리여야 합니다.';
+                        } else {
+                          return null;
+                        }
+                      },
+                      decoration: InputDecoration(
+                          border: InputBorder.none,
+                          icon: Icon(Icons.perm_contact_cal,
+                              color: Colors.blueAccent),
+                          hintText: '수험번호',
+                          hintStyle:
+                          GoogleFonts.montserrat(fontSize: 18)),
+                      onChanged: (val) {
+                        userId = val;
+                      },
+                    ),
+                  ),
+                ) : Container(),
+                SizedBox(height: 10),
+                Container(
                     alignment: Alignment.center,
                     decoration: BoxDecoration(
                         border: Border.all(color: Colors.blueAccent.withOpacity(0.5)),
@@ -201,7 +251,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                                 if (val.isEmpty) {
                                   return '휴대폰 번호을 입력하세요';
                                 } else {
-                                  print('val : $val');
+                                  print('changed phoneNumber : $val');
                                   return null;
                                 }
                               },
@@ -317,11 +367,14 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
   updateUserData() async {
     await userReference.doc(widget.currentUserId).update({
+      'id': userId,
       'grade': grade,
       'name': name,
       'phoneNumber': phoneNumber
     });
-    showToast('정보 수정 완료', duration: 2);
+    if(mounted) {
+      showToast('정보 수정 완료', duration: 2);
+    }
   }
 
   showToast(String msg, {int duration, int gravity}) {

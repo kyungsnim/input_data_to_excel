@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:logger/logger.dart';
 
 
 import 'CourseSubmitPage.dart';
@@ -16,6 +17,7 @@ final userReference =
 final courseReference = FirebaseFirestore.instance.collection('courses'); // 과제 정보 저장을 위한 ref
 
 final FirebaseFirestore firestoreReference = FirebaseFirestore.instance;
+Logger logger = Logger();
 
 final DateTime timestamp = DateTime.now();
 CurrentUser currentUser = new CurrentUser(

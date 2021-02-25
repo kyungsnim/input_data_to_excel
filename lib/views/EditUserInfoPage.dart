@@ -5,6 +5,7 @@ import 'package:input_data_to_excel/models/CurrentUser.dart';
 import 'package:input_data_to_excel/res/database.dart';
 
 import 'EditProfilePage.dart';
+import 'HomePage.dart';
 
 enum SelectedRadio { username, id }
 
@@ -235,7 +236,9 @@ class UserInfoTile extends StatefulWidget {
 }
 
 class _UserInfoTileState extends State<UserInfoTile> {
+
   void _showEditProfileDialog(context) {
+    logger.d('_showEditProfileDialog : 정보 수정 팝업');
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -252,7 +255,7 @@ class _UserInfoTileState extends State<UserInfoTile> {
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
           content: Container(
               width: MediaQuery.of(context).size.width * 1,
-              height: MediaQuery.of(context).size.height * 0.3,
+              height: MediaQuery.of(context).size.height * 0.45,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(10),
               ),
