@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:input_data_to_excel/res/database.dart';
 import 'package:input_data_to_excel/widgets/JJHBody.dart';
 import 'package:input_data_to_excel/widgets/LoginButton.dart';
@@ -51,17 +53,34 @@ class SignUpPageWithUserIdState extends State<SignUpPageWithUserId> {
   }
 
   signUpWithUserIdPassword() async {
-    // {this.id,
-    // this.grade,
-    // this.validateByAdmin,
-    // this.role,
-    // this.createdAt})
     try {
       Map<dynamic, dynamic> userMap = {
         "id": userId,
         "password": password,
         "grade": grade,
         "validateByAdmin": false, // 최초 회원가입시 관리자 검증 false
+        "name": name,
+        "phoneNumber": phoneNumber,
+        "role": "student",
+        "createdAt": DateTime.now()
+      };
+      await ds.addUser(userMap, userId);
+    } catch (e) {
+      print(e.toString());
+    }
+    Navigator.pop(context);
+  }
+
+  signUpWithUserIdPasswordInApple() async {
+    try {
+      Map<dynamic, dynamic> userMap = {
+        "id": userId,
+        "password": password,
+        "grade": grade,
+        "validateByAdmin": false, // 최초 회원가입시 관리자 검증 false
+        "name": name != null && name != "" ? name : "",
+        "phoneNumber":
+            phoneNumber != null && phoneNumber != "" ? phoneNumber : "",
         "role": "student",
         "createdAt": DateTime.now()
       };
@@ -104,9 +123,11 @@ class SignUpPageWithUserIdState extends State<SignUpPageWithUserId> {
                             color: Colors.white,
                             fontWeight: FontWeight.bold,
                             shadows: [
-                              Shadow(offset: Offset(1, 2), blurRadius: 3, color: Colors.black)
-                            ]
-                        ),
+                              Shadow(
+                                  offset: Offset(1, 2),
+                                  blurRadius: 3,
+                                  color: Colors.black)
+                            ]),
                       ),
                     ),
                     // SizedBox(height: 40),
@@ -165,17 +186,21 @@ class SignUpPageWithUserIdState extends State<SignUpPageWithUserId> {
                           Container(
                             alignment: Alignment.center,
                             decoration: BoxDecoration(
-                                border: Border.all(color: Colors.green.withOpacity(0.5)),
+                                border: Border.all(
+                                    color: Colors.green.withOpacity(0.5)),
                                 borderRadius: BorderRadius.circular(10),
                                 color: Colors.white,
                                 boxShadow: [
-                                  BoxShadow(offset: Offset(1, 1), blurRadius: 5, color: Colors.white24)
-                                ]
-                            ),
+                                  BoxShadow(
+                                      offset: Offset(1, 1),
+                                      blurRadius: 5,
+                                      color: Colors.white24)
+                                ]),
                             width: MediaQuery.of(context).size.width * 0.8,
                             height: MediaQuery.of(context).size.height * 0.07,
                             child: Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 10),
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 10),
                               child: Row(
                                 children: [
                                   Icon(Icons.person, color: Colors.green),
@@ -186,7 +211,7 @@ class SignUpPageWithUserIdState extends State<SignUpPageWithUserId> {
                                       controller: _nameController,
                                       cursorColor: Colors.green,
                                       validator: (val) {
-                                        if (val.isEmpty) {
+                                        if (!Platform.isIOS && val.isEmpty) {
                                           return '이름을 입력하세요';
                                         } else {
                                           return null;
@@ -194,8 +219,9 @@ class SignUpPageWithUserIdState extends State<SignUpPageWithUserId> {
                                       },
                                       decoration: InputDecoration(
                                           border: InputBorder.none,
-                                          hintText: '이름',
-                                          hintStyle: GoogleFonts.montserrat(fontSize: 18)),
+                                          hintText: Platform.isIOS ? '이름(선택사항)' : '이름',
+                                          hintStyle: GoogleFonts.montserrat(
+                                              fontSize: 18)),
                                       onChanged: (val) {
                                         name = val;
                                       },
@@ -209,17 +235,21 @@ class SignUpPageWithUserIdState extends State<SignUpPageWithUserId> {
                           Container(
                             alignment: Alignment.center,
                             decoration: BoxDecoration(
-                                border: Border.all(color: Colors.green.withOpacity(0.5)),
+                                border: Border.all(
+                                    color: Colors.green.withOpacity(0.5)),
                                 borderRadius: BorderRadius.circular(10),
                                 color: Colors.white,
                                 boxShadow: [
-                                  BoxShadow(offset: Offset(1, 1), blurRadius: 5, color: Colors.white24)
-                                ]
-                            ),
+                                  BoxShadow(
+                                      offset: Offset(1, 1),
+                                      blurRadius: 5,
+                                      color: Colors.white24)
+                                ]),
                             width: MediaQuery.of(context).size.width * 0.8,
                             height: MediaQuery.of(context).size.height * 0.07,
                             child: Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 10),
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 10),
                               child: Row(
                                 children: [
                                   Icon(Icons.phone, color: Colors.green),
@@ -228,14 +258,16 @@ class SignUpPageWithUserIdState extends State<SignUpPageWithUserId> {
                                     flex: 1,
                                     child: TextFormField(
                                       inputFormatters: [
-                                        MultiMaskedTextInputFormatter(
-                                            masks: ['xxx-xxxx-xxxx', 'xxx-xxx-xxxx'], separator: '-')
+                                        MultiMaskedTextInputFormatter(masks: [
+                                          'xxx-xxxx-xxxx',
+                                          'xxx-xxx-xxxx'
+                                        ], separator: '-')
                                       ],
                                       keyboardType: TextInputType.number,
                                       controller: _phoneNumberController,
                                       cursorColor: Colors.green,
                                       validator: (val) {
-                                        if (val.isEmpty) {
+                                        if (!Platform.isIOS && val.isEmpty) {
                                           return '휴대폰 번호을 입력하세요';
                                         } else {
                                           print('val : $val');
@@ -244,8 +276,9 @@ class SignUpPageWithUserIdState extends State<SignUpPageWithUserId> {
                                       },
                                       decoration: InputDecoration(
                                           border: InputBorder.none,
-                                          hintText: '휴대폰번호',
-                                          hintStyle: GoogleFonts.montserrat(fontSize: 18)),
+                                          hintText: Platform.isIOS ? '휴대폰번호(선택사항)' : '휴대폰번호',
+                                          hintStyle: GoogleFonts.montserrat(
+                                              fontSize: 18)),
                                       onChanged: (val) {
                                         phoneNumber = val;
                                       },
@@ -259,8 +292,8 @@ class SignUpPageWithUserIdState extends State<SignUpPageWithUserId> {
                           Container(
                             alignment: Alignment.center,
                             decoration: BoxDecoration(
-                                border:
-                                Border.all(color: Colors.green.withOpacity(0.5)),
+                                border: Border.all(
+                                    color: Colors.green.withOpacity(0.5)),
                                 borderRadius: BorderRadius.circular(10),
                                 color: Colors.white,
                                 boxShadow: [
@@ -272,7 +305,8 @@ class SignUpPageWithUserIdState extends State<SignUpPageWithUserId> {
                             width: MediaQuery.of(context).size.width * 0.8,
                             height: MediaQuery.of(context).size.height * 0.07,
                             child: Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 10),
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 10),
                               child: Row(
                                 children: [
                                   Icon(Icons.perm_contact_cal_outlined,
@@ -327,7 +361,7 @@ class SignUpPageWithUserIdState extends State<SignUpPageWithUserId> {
                             height: MediaQuery.of(context).size.height * 0.07,
                             child: Padding(
                               padding:
-                              const EdgeInsets.symmetric(horizontal: 10),
+                                  const EdgeInsets.symmetric(horizontal: 10),
                               child: TextFormField(
                                 controller: _passwordController,
                                 obscureText: true,
@@ -348,7 +382,7 @@ class SignUpPageWithUserIdState extends State<SignUpPageWithUserId> {
                                         color: Colors.green),
                                     hintText: '비밀번호',
                                     hintStyle:
-                                    GoogleFonts.montserrat(fontSize: 18)),
+                                        GoogleFonts.montserrat(fontSize: 18)),
                                 onChanged: (val) {
                                   password = val;
                                 },
@@ -373,7 +407,7 @@ class SignUpPageWithUserIdState extends State<SignUpPageWithUserId> {
                             height: MediaQuery.of(context).size.height * 0.07,
                             child: Padding(
                               padding:
-                              const EdgeInsets.symmetric(horizontal: 10),
+                                  const EdgeInsets.symmetric(horizontal: 10),
                               child: TextFormField(
                                 controller: _confirmPasswordController,
                                 obscureText: true,
@@ -384,7 +418,8 @@ class SignUpPageWithUserIdState extends State<SignUpPageWithUserId> {
                                   });
                                   if (val.length < 4) {
                                     return '4자 이상의 비밀번호를 사용하세요.';
-                                  } else if (_passwordController.text != _confirmPasswordController.text){
+                                  } else if (_passwordController.text !=
+                                      _confirmPasswordController.text) {
                                     return '비밀번호 입력이 잘못되었습니다.';
                                   } else {
                                     return val.isEmpty ? '비밀번호를 입력하세요' : null;
@@ -396,7 +431,7 @@ class SignUpPageWithUserIdState extends State<SignUpPageWithUserId> {
                                         color: Colors.green),
                                     hintText: '비밀번호 확인',
                                     hintStyle:
-                                    GoogleFonts.montserrat(fontSize: 18)),
+                                        GoogleFonts.montserrat(fontSize: 18)),
                                 onChanged: (val) {
                                   password = val;
                                 },
@@ -435,7 +470,8 @@ class SignUpPageWithUserIdState extends State<SignUpPageWithUserId> {
                                         if (grade == null) {
                                           checkIdPasswordPopup(
                                               '학년 선택', '학년을 선택하세요.');
-                                        } else if (_formKey.currentState.validate()) {
+                                        } else if (_formKey.currentState
+                                            .validate()) {
                                           signUpWithUserIdPassword();
                                         }
                                       } else {
