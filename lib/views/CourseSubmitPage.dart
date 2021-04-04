@@ -2,10 +2,8 @@
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:csv/csv.dart';
 import 'package:excel/excel.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:flutter_mailer/flutter_mailer.dart';
 
 import 'package:input_data_to_excel/models/CourseModel.dart';
 import 'package:flutter/material.dart';
@@ -18,6 +16,7 @@ import 'package:toast/toast.dart';
 import 'dart:core';
 import 'AddCoursePage.dart';
 import 'CourseRoom.dart';
+import 'CourseRoom2.dart';
 import 'HomePage.dart';
 
 String fileName;
@@ -343,10 +342,19 @@ class _CourseSubmitPageState extends State<CourseSubmitPage> {
                     if (val.exists) {
                       checkDeletePopup(event);
                     } else {
-                      Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => CourseRoom(event)));
+                      // 마감기간이 지나면 과제제출 불가
+                      if(DateTime.now().day != event.thirdDueDate.day && DateTime.now().isAfter(event.thirdDueDate)) {
+                        overTheDueDatePopup();
+                      } else {
+                        // 3차 마감기한ㄲ
+                        currentUser.grade == '중학교 2학년' || currentUser.grade == '중학교 3학년' ? Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => CourseRoom2(event))) : Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => CourseRoom(event)));
+                      }
                     }
                   });
                 },
@@ -468,6 +476,31 @@ class _CourseSubmitPageState extends State<CourseSubmitPage> {
     });
   }
 
+  overTheDueDatePopup() async {
+    await showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('과제 제출 마감'),
+            content: Text("과제 제출기간이 지났습니다.",
+                style: TextStyle(color: Colors.redAccent)),
+            actions: [
+              FlatButton(
+                child: Container(
+                  padding: const EdgeInsets.all(16),
+                  child: Text('닫기',
+                      style: GoogleFonts.montserrat(
+                          color: Colors.grey, fontSize: 20)),
+                ),
+                onPressed: () async {
+                  Navigator.pop(context);
+                },
+              ),
+            ],
+          );
+        });
+  }
+
   checkDeletePopup(event) async {
     await showDialog(
         context: context,
@@ -491,7 +524,10 @@ class _CourseSubmitPageState extends State<CourseSubmitPage> {
                       .doc(currentUser.id)
                       .delete();
                   showToast("기존 답안 삭제 완료");
-                  Navigator.pushReplacement(
+                  currentUser.grade == '중학교 2학년' || currentUser.grade == '중학교 3학년' ? Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => CourseRoom2(event))) : Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(
                           builder: (context) => CourseRoom(event)));
@@ -616,13 +652,671 @@ class _CourseSubmitPageState extends State<CourseSubmitPage> {
         row.add(cloud.docs[i].data()['name'].toString());
         // 휴대폰번호 넣기
         row.add(cloud.docs[i].data()['phoneNumber'].toString());
-        // 50까지 입력 답 넣기
-        for (int j = 0; j < 50; j++) {
-          if (cloud.docs[i].data()['answer'][j] == null) {
-            row.add("");
-          } else {
-            row.add(cloud.docs[i].data()['answer'][j]);
+
+        // 50까지 입력 답 넣기 (단일 선택 답안 제출한 경우)
+        if(cloud.docs[i].data()['answer'] != null && cloud.docs[i].data()['answer1'] == null) {
+          for (int j = 0; j < 50; j++) {
+            if (cloud.docs[i].data()['answer'] != null && cloud.docs[i].data()['answer'][j] == null) {
+              row.add("");
+            } else {
+              row.add(cloud.docs[i].data()['answer'][j]);
+            }
           }
+        } else { // 다중 선택 답안 제출한 경우
+          // 1번
+          var tmpAnswer = "";
+          for (int k = 0; k < 5; k++) {
+            if (cloud.docs[i].data()['answer1'] != null && cloud.docs[i].data()['answer1'][k] != null &&
+                cloud.docs[i].data()['answer1'][k] != "") {
+              tmpAnswer += (k+1).toString() + ", ";
+            }
+          }
+          // 제일 마지막 ", " 부분은 자르기
+          if(tmpAnswer != "") {
+            tmpAnswer = tmpAnswer.substring(0, tmpAnswer.length - 2);
+          }
+          row.add(tmpAnswer);
+
+          tmpAnswer = "";
+          for (int k = 0; k < 5; k++) {
+            if (cloud.docs[i].data()['answer2'] != null && cloud.docs[i].data()['answer2'][k] != null &&
+                cloud.docs[i].data()['answer2'][k] != "") {
+              tmpAnswer += (k+1).toString() + ", ";
+            }
+          }
+          // 제일 마지막 ", " 부분은 자르기
+          if(tmpAnswer != "") {
+            tmpAnswer = tmpAnswer.substring(0, tmpAnswer.length - 2);
+          }
+          row.add(tmpAnswer);
+
+          tmpAnswer = "";
+          for (int k = 0; k < 5; k++) {
+            if (cloud.docs[i].data()['answer3'] != null && cloud.docs[i].data()['answer3'][k] != null &&
+                cloud.docs[i].data()['answer3'][k] != "") {
+              tmpAnswer += (k+1).toString() + ", ";
+            }
+          }
+          // 제일 마지막 ", " 부분은 자르기
+          if(tmpAnswer != "") {
+            tmpAnswer = tmpAnswer.substring(0, tmpAnswer.length - 2);
+          }
+          row.add(tmpAnswer);
+
+          tmpAnswer = "";
+          for (int k = 0; k < 5; k++) {
+            if (cloud.docs[i].data()['answer4'] != null && cloud.docs[i].data()['answer4'][k] != null &&
+                cloud.docs[i].data()['answer4'][k] != "") {
+              tmpAnswer += (k+1).toString() + ", ";
+            }
+          }
+          // 제일 마지막 ", " 부분은 자르기
+          if(tmpAnswer != "") {
+            tmpAnswer = tmpAnswer.substring(0, tmpAnswer.length - 2);
+          }
+          row.add(tmpAnswer);
+
+          tmpAnswer = "";
+          for (int k = 0; k < 5; k++) {
+            if (cloud.docs[i].data()['answer5'] != null && cloud.docs[i].data()['answer5'][k] != null &&
+                cloud.docs[i].data()['answer5'][k] != "") {
+              tmpAnswer += (k+1).toString() + ", ";
+            }
+          }
+          // 제일 마지막 ", " 부분은 자르기
+          if(tmpAnswer != "") {
+            tmpAnswer = tmpAnswer.substring(0, tmpAnswer.length - 2);
+          }
+          row.add(tmpAnswer);
+
+          tmpAnswer = "";
+          for (int k = 0; k < 5; k++) {
+            if (cloud.docs[i].data()['answer6'] != null && cloud.docs[i].data()['answer6'][k] != null &&
+                cloud.docs[i].data()['answer6'][k] != "") {
+              tmpAnswer += (k+1).toString() + ", ";
+            }
+          }
+          // 제일 마지막 ", " 부분은 자르기
+          if(tmpAnswer != "") {
+            tmpAnswer = tmpAnswer.substring(0, tmpAnswer.length - 2);
+          }
+          row.add(tmpAnswer);
+
+          tmpAnswer = "";
+          for (int k = 0; k < 5; k++) {
+            if (cloud.docs[i].data()['answer7'] != null && cloud.docs[i].data()['answer7'][k] != null &&
+                cloud.docs[i].data()['answer7'][k] != "") {
+              tmpAnswer += (k+1).toString() + ", ";
+            }
+          }
+          // 제일 마지막 ", " 부분은 자르기
+          if(tmpAnswer != "") {
+            tmpAnswer = tmpAnswer.substring(0, tmpAnswer.length - 2);
+          }
+          row.add(tmpAnswer);
+
+          tmpAnswer = "";
+          for (int k = 0; k < 5; k++) {
+            if (cloud.docs[i].data()['answer8'] != null && cloud.docs[i].data()['answer8'][k] != null &&
+                cloud.docs[i].data()['answer8'][k] != "") {
+              tmpAnswer += (k+1).toString() + ", ";
+            }
+          }
+          // 제일 마지막 ", " 부분은 자르기
+          if(tmpAnswer != "") {
+            tmpAnswer = tmpAnswer.substring(0, tmpAnswer.length - 2);
+          }
+          row.add(tmpAnswer);
+
+          tmpAnswer = "";
+          for (int k = 0; k < 5; k++) {
+            if (cloud.docs[i].data()['answer9'] != null && cloud.docs[i].data()['answer9'][k] != null &&
+                cloud.docs[i].data()['answer9'][k] != "") {
+              tmpAnswer += (k+1).toString() + ", ";
+            }
+          }
+          // 제일 마지막 ", " 부분은 자르기
+          if(tmpAnswer != "") {
+            tmpAnswer = tmpAnswer.substring(0, tmpAnswer.length - 2);
+          }
+          row.add(tmpAnswer);
+
+          tmpAnswer = "";
+          for (int k = 0; k < 5; k++) {
+            if (cloud.docs[i].data()['answer10'] != null && cloud.docs[i].data()['answer10'][k] != null &&
+                cloud.docs[i].data()['answer10'][k] != "") {
+              tmpAnswer += (k+1).toString() + ", ";
+            }
+          }
+          // 제일 마지막 ", " 부분은 자르기
+          if(tmpAnswer != "") {
+            tmpAnswer = tmpAnswer.substring(0, tmpAnswer.length - 2);
+          }
+          row.add(tmpAnswer);
+
+          // 11번
+          tmpAnswer = "";
+          for (int k = 0; k < 5; k++) {
+            if (cloud.docs[i].data()['answer11'] != null && cloud.docs[i].data()['answer11'][k] != null &&
+                cloud.docs[i].data()['answer11'][k] != "") {
+              tmpAnswer += (k+1).toString() + ", ";
+            }
+          }
+          // 제일 마지막 ", " 부분은 자르기
+          if(tmpAnswer != "") {
+            tmpAnswer = tmpAnswer.substring(0, tmpAnswer.length - 2);
+          }
+          row.add(tmpAnswer);
+
+          tmpAnswer = "";
+          for (int k = 0; k < 5; k++) {
+            if (cloud.docs[i].data()['answer12'] != null && cloud.docs[i].data()['answer12'][k] != null &&
+                cloud.docs[i].data()['answer12'][k] != "") {
+              tmpAnswer += (k+1).toString() + ", ";
+            }
+          }
+          // 제일 마지막 ", " 부분은 자르기
+          if(tmpAnswer != "") {
+            tmpAnswer = tmpAnswer.substring(0, tmpAnswer.length - 2);
+          }
+          row.add(tmpAnswer);
+
+          tmpAnswer = "";
+          for (int k = 0; k < 5; k++) {
+            if (cloud.docs[i].data()['answer13'] != null && cloud.docs[i].data()['answer13'][k] != null &&
+                cloud.docs[i].data()['answer13'][k] != "") {
+              tmpAnswer += (k+1).toString() + ", ";
+            }
+          }
+          // 제일 마지막 ", " 부분은 자르기
+          if(tmpAnswer != "") {
+            tmpAnswer = tmpAnswer.substring(0, tmpAnswer.length - 2);
+          }
+          row.add(tmpAnswer);
+
+          tmpAnswer = "";
+          for (int k = 0; k < 5; k++) {
+            if (cloud.docs[i].data()['answer14'] != null && cloud.docs[i].data()['answer14'][k] != null &&
+                cloud.docs[i].data()['answer14'][k] != "") {
+              tmpAnswer += (k+1).toString() + ", ";
+            }
+          }
+          // 제일 마지막 ", " 부분은 자르기
+          if(tmpAnswer != "") {
+            tmpAnswer = tmpAnswer.substring(0, tmpAnswer.length - 2);
+          }
+          row.add(tmpAnswer);
+
+          tmpAnswer = "";
+          for (int k = 0; k < 5; k++) {
+            if (cloud.docs[i].data()['answer15'] != null && cloud.docs[i].data()['answer15'][k] != null &&
+                cloud.docs[i].data()['answer15'][k] != "") {
+              tmpAnswer += (k+1).toString() + ", ";
+            }
+          }
+          // 제일 마지막 ", " 부분은 자르기
+          if(tmpAnswer != "") {
+            tmpAnswer = tmpAnswer.substring(0, tmpAnswer.length - 2);
+          }
+          row.add(tmpAnswer);
+
+          tmpAnswer = "";
+          for (int k = 0; k < 5; k++) {
+            if (cloud.docs[i].data()['answer16'] != null && cloud.docs[i].data()['answer16'][k] != null &&
+                cloud.docs[i].data()['answer16'][k] != "") {
+              tmpAnswer += (k+1).toString() + ", ";
+            }
+          }
+          // 제일 마지막 ", " 부분은 자르기
+          if(tmpAnswer != "") {
+            tmpAnswer = tmpAnswer.substring(0, tmpAnswer.length - 2);
+          }
+          row.add(tmpAnswer);
+
+          tmpAnswer = "";
+          for (int k = 0; k < 5; k++) {
+            if (cloud.docs[i].data()['answer17'] != null && cloud.docs[i].data()['answer17'][k] != null &&
+                cloud.docs[i].data()['answer17'][k] != "") {
+              tmpAnswer += (k+1).toString() + ", ";
+            }
+          }
+          // 제일 마지막 ", " 부분은 자르기
+          if(tmpAnswer != "") {
+            tmpAnswer = tmpAnswer.substring(0, tmpAnswer.length - 2);
+          }
+          row.add(tmpAnswer);
+
+          tmpAnswer = "";
+          for (int k = 0; k < 5; k++) {
+            if (cloud.docs[i].data()['answer18'] != null && cloud.docs[i].data()['answer18'][k] != null &&
+                cloud.docs[i].data()['answer18'][k] != "") {
+              tmpAnswer += (k+1).toString() + ", ";
+            }
+          }
+          // 제일 마지막 ", " 부분은 자르기
+          if(tmpAnswer != "") {
+            tmpAnswer = tmpAnswer.substring(0, tmpAnswer.length - 2);
+          }
+          row.add(tmpAnswer);
+
+          tmpAnswer = "";
+          for (int k = 0; k < 5; k++) {
+            if (cloud.docs[i].data()['answer19'] != null && cloud.docs[i].data()['answer19'][k] != null &&
+                cloud.docs[i].data()['answer19'][k] != "") {
+              tmpAnswer += (k+1).toString() + ", ";
+            }
+          }
+          // 제일 마지막 ", " 부분은 자르기
+          if(tmpAnswer != "") {
+            tmpAnswer = tmpAnswer.substring(0, tmpAnswer.length - 2);
+          }
+          row.add(tmpAnswer);
+
+          tmpAnswer = "";
+          for (int k = 0; k < 5; k++) {
+            if (cloud.docs[i].data()['answer20'] != null && cloud.docs[i].data()['answer20'][k] != null &&
+                cloud.docs[i].data()['answer20'][k] != "") {
+              tmpAnswer += (k+1).toString() + ", ";
+            }
+          }
+          // 제일 마지막 ", " 부분은 자르기
+          if(tmpAnswer != "") {
+            tmpAnswer = tmpAnswer.substring(0, tmpAnswer.length - 2);
+          }
+          row.add(tmpAnswer);
+
+          // 21번
+          tmpAnswer = "";
+          for (int k = 0; k < 5; k++) {
+            if (cloud.docs[i].data()['answer21'] != null && cloud.docs[i].data()['answer21'][k] != null &&
+                cloud.docs[i].data()['answer21'][k] != "") {
+              tmpAnswer += (k+1).toString() + ", ";
+            }
+          }
+          // 제일 마지막 ", " 부분은 자르기
+          if(tmpAnswer != "") {
+            tmpAnswer = tmpAnswer.substring(0, tmpAnswer.length - 2);
+          }
+          row.add(tmpAnswer);
+
+          tmpAnswer = "";
+          for (int k = 0; k < 5; k++) {
+            if (cloud.docs[i].data()['answer22'] != null && cloud.docs[i].data()['answer22'][k] != null &&
+                cloud.docs[i].data()['answer22'][k] != "") {
+              tmpAnswer += (k+1).toString() + ", ";
+            }
+          }
+          // 제일 마지막 ", " 부분은 자르기
+          if(tmpAnswer != "") {
+            tmpAnswer = tmpAnswer.substring(0, tmpAnswer.length - 2);
+          }
+          row.add(tmpAnswer);
+
+          tmpAnswer = "";
+          for (int k = 0; k < 5; k++) {
+            if (cloud.docs[i].data()['answer23'] != null && cloud.docs[i].data()['answer23'][k] != null &&
+                cloud.docs[i].data()['answer23'][k] != "") {
+              tmpAnswer += (k+1).toString() + ", ";
+            }
+          }
+          // 제일 마지막 ", " 부분은 자르기
+          if(tmpAnswer != "") {
+            tmpAnswer = tmpAnswer.substring(0, tmpAnswer.length - 2);
+          }
+          row.add(tmpAnswer);
+
+          tmpAnswer = "";
+          for (int k = 0; k < 5; k++) {
+            if (cloud.docs[i].data()['answer24'] != null && cloud.docs[i].data()['answer24'][k] != null &&
+                cloud.docs[i].data()['answer24'][k] != "") {
+              tmpAnswer += (k+1).toString() + ", ";
+            }
+          }
+          // 제일 마지막 ", " 부분은 자르기
+          if(tmpAnswer != "") {
+            tmpAnswer = tmpAnswer.substring(0, tmpAnswer.length - 2);
+          }
+          row.add(tmpAnswer);
+
+          tmpAnswer = "";
+          for (int k = 0; k < 5; k++) {
+            if (cloud.docs[i].data()['answer25'] != null && cloud.docs[i].data()['answer25'][k] != null &&
+                cloud.docs[i].data()['answer25'][k] != "") {
+              tmpAnswer += (k+1).toString() + ", ";
+            }
+          }
+          // 제일 마지막 ", " 부분은 자르기
+          if(tmpAnswer != "") {
+            tmpAnswer = tmpAnswer.substring(0, tmpAnswer.length - 2);
+          }
+          row.add(tmpAnswer);
+
+          tmpAnswer = "";
+          for (int k = 0; k < 5; k++) {
+            if (cloud.docs[i].data()['answer26'] != null && cloud.docs[i].data()['answer26'][k] != null &&
+                cloud.docs[i].data()['answer26'][k] != "") {
+              tmpAnswer += (k+1).toString() + ", ";
+            }
+          }
+          // 제일 마지막 ", " 부분은 자르기
+          if(tmpAnswer != "") {
+            tmpAnswer = tmpAnswer.substring(0, tmpAnswer.length - 2);
+          }
+          row.add(tmpAnswer);
+
+          tmpAnswer = "";
+          for (int k = 0; k < 5; k++) {
+            if (cloud.docs[i].data()['answer27'] != null && cloud.docs[i].data()['answer27'][k] != null &&
+                cloud.docs[i].data()['answer27'][k] != "") {
+              tmpAnswer += (k+1).toString() + ", ";
+            }
+          }
+          // 제일 마지막 ", " 부분은 자르기
+          if(tmpAnswer != "") {
+            tmpAnswer = tmpAnswer.substring(0, tmpAnswer.length - 2);
+          }
+          row.add(tmpAnswer);
+
+          tmpAnswer = "";
+          for (int k = 0; k < 5; k++) {
+            if (cloud.docs[i].data()['answer28'] != null && cloud.docs[i].data()['answer28'][k] != null &&
+                cloud.docs[i].data()['answer28'][k] != "") {
+              tmpAnswer += (k+1).toString() + ", ";
+            }
+          }
+          // 제일 마지막 ", " 부분은 자르기
+          if(tmpAnswer != "") {
+            tmpAnswer = tmpAnswer.substring(0, tmpAnswer.length - 2);
+          }
+          row.add(tmpAnswer);
+
+          tmpAnswer = "";
+          for (int k = 0; k < 5; k++) {
+            if (cloud.docs[i].data()['answer29'] != null && cloud.docs[i].data()['answer29'][k] != null &&
+                cloud.docs[i].data()['answer29'][k] != "") {
+              tmpAnswer += (k+1).toString() + ", ";
+            }
+          }
+          // 제일 마지막 ", " 부분은 자르기
+          if(tmpAnswer != "") {
+            tmpAnswer = tmpAnswer.substring(0, tmpAnswer.length - 2);
+          }
+          row.add(tmpAnswer);
+
+          tmpAnswer = "";
+          for (int k = 0; k < 5; k++) {
+            if (cloud.docs[i].data()['answer30'] != null && cloud.docs[i].data()['answer30'][k] != null &&
+                cloud.docs[i].data()['answer30'][k] != "") {
+              tmpAnswer += (k+1).toString() + ", ";
+            }
+          }
+          // 제일 마지막 ", " 부분은 자르기
+          if(tmpAnswer != "") {
+            tmpAnswer = tmpAnswer.substring(0, tmpAnswer.length - 2);
+          }
+          row.add(tmpAnswer);
+
+          // 31번
+          tmpAnswer = "";
+          for (int k = 0; k < 5; k++) {
+            if (cloud.docs[i].data()['answer31'] != null && cloud.docs[i].data()['answer31'][k] != null &&
+                cloud.docs[i].data()['answer31'][k] != "") {
+              tmpAnswer += (k+1).toString() + ", ";
+            }
+          }
+          // 제일 마지막 ", " 부분은 자르기
+          if(tmpAnswer != "") {
+            tmpAnswer = tmpAnswer.substring(0, tmpAnswer.length - 2);
+          }
+          row.add(tmpAnswer);
+
+          tmpAnswer = "";
+          for (int k = 0; k < 5; k++) {
+            if (cloud.docs[i].data()['answer32'] != null && cloud.docs[i].data()['answer32'][k] != null &&
+                cloud.docs[i].data()['answer32'][k] != "") {
+              tmpAnswer += (k+1).toString() + ", ";
+            }
+          }
+          // 제일 마지막 ", " 부분은 자르기
+          if(tmpAnswer != "") {
+            tmpAnswer = tmpAnswer.substring(0, tmpAnswer.length - 2);
+          }
+          row.add(tmpAnswer);
+
+          tmpAnswer = "";
+          for (int k = 0; k < 5; k++) {
+            if (cloud.docs[i].data()['answer33'] != null && cloud.docs[i].data()['answer33'][k] != null &&
+                cloud.docs[i].data()['answer33'][k] != "") {
+              tmpAnswer += (k+1).toString() + ", ";
+            }
+          }
+          // 제일 마지막 ", " 부분은 자르기
+          if(tmpAnswer != "") {
+            tmpAnswer = tmpAnswer.substring(0, tmpAnswer.length - 2);
+          }
+          row.add(tmpAnswer);
+
+          tmpAnswer = "";
+          for (int k = 0; k < 5; k++) {
+            if (cloud.docs[i].data()['answer34'] != null && cloud.docs[i].data()['answer34'][k] != null &&
+                cloud.docs[i].data()['answer34'][k] != "") {
+              tmpAnswer += (k+1).toString() + ", ";
+            }
+          }
+          // 제일 마지막 ", " 부분은 자르기
+          if(tmpAnswer != "") {
+            tmpAnswer = tmpAnswer.substring(0, tmpAnswer.length - 2);
+          }
+          row.add(tmpAnswer);
+
+          tmpAnswer = "";
+          for (int k = 0; k < 5; k++) {
+            if (cloud.docs[i].data()['answer35'] != null && cloud.docs[i].data()['answer35'][k] != null &&
+                cloud.docs[i].data()['answer35'][k] != "") {
+              tmpAnswer += (k+1).toString() + ", ";
+            }
+          }
+          // 제일 마지막 ", " 부분은 자르기
+          if(tmpAnswer != "") {
+            tmpAnswer = tmpAnswer.substring(0, tmpAnswer.length - 2);
+          }
+          row.add(tmpAnswer);
+
+          tmpAnswer = "";
+          for (int k = 0; k < 5; k++) {
+            if (cloud.docs[i].data()['answer36'] != null && cloud.docs[i].data()['answer36'][k] != null &&
+                cloud.docs[i].data()['answer36'][k] != "") {
+              tmpAnswer += (k+1).toString() + ", ";
+            }
+          }
+          // 제일 마지막 ", " 부분은 자르기
+          if(tmpAnswer != "") {
+            tmpAnswer = tmpAnswer.substring(0, tmpAnswer.length - 2);
+          }
+          row.add(tmpAnswer);
+
+          tmpAnswer = "";
+          for (int k = 0; k < 5; k++) {
+            if (cloud.docs[i].data()['answer37'] != null && cloud.docs[i].data()['answer37'][k] != null &&
+                cloud.docs[i].data()['answer37'][k] != "") {
+              tmpAnswer += (k+1).toString() + ", ";
+            }
+          }
+          // 제일 마지막 ", " 부분은 자르기
+          if(tmpAnswer != "") {
+            tmpAnswer = tmpAnswer.substring(0, tmpAnswer.length - 2);
+          }
+          row.add(tmpAnswer);
+
+          tmpAnswer = "";
+          for (int k = 0; k < 5; k++) {
+            if (cloud.docs[i].data()['answer38'] != null && cloud.docs[i].data()['answer38'][k] != null &&
+                cloud.docs[i].data()['answer38'][k] != "") {
+              tmpAnswer += (k+1).toString() + ", ";
+            }
+          }
+          // 제일 마지막 ", " 부분은 자르기
+          if(tmpAnswer != "") {
+            tmpAnswer = tmpAnswer.substring(0, tmpAnswer.length - 2);
+          }
+          row.add(tmpAnswer);
+
+          tmpAnswer = "";
+          for (int k = 0; k < 5; k++) {
+            if (cloud.docs[i].data()['answer39'] != null && cloud.docs[i].data()['answer39'][k] != null &&
+                cloud.docs[i].data()['answer39'][k] != "") {
+              tmpAnswer += (k+1).toString() + ", ";
+            }
+          }
+          // 제일 마지막 ", " 부분은 자르기
+          if(tmpAnswer != "") {
+            tmpAnswer = tmpAnswer.substring(0, tmpAnswer.length - 2);
+          }
+          row.add(tmpAnswer);
+
+          tmpAnswer = "";
+          for (int k = 0; k < 5; k++) {
+            if (cloud.docs[i].data()['answer40'] != null && cloud.docs[i].data()['answer40'][k] != null &&
+                cloud.docs[i].data()['answer40'][k] != "") {
+              tmpAnswer += (k+1).toString() + ", ";
+            }
+          }
+          // 제일 마지막 ", " 부분은 자르기
+          if(tmpAnswer != "") {
+            tmpAnswer = tmpAnswer.substring(0, tmpAnswer.length - 2);
+          }
+          row.add(tmpAnswer);
+
+          // 41번
+          tmpAnswer = "";
+          for (int k = 0; k < 5; k++) {
+            if (cloud.docs[i].data()['answer41'] != null && cloud.docs[i].data()['answer41'][k] != null &&
+                cloud.docs[i].data()['answer41'][k] != "") {
+              tmpAnswer += (k+1).toString() + ", ";
+            }
+          }
+          // 제일 마지막 ", " 부분은 자르기
+          if(tmpAnswer != "") {
+            tmpAnswer = tmpAnswer.substring(0, tmpAnswer.length - 2);
+          }
+          row.add(tmpAnswer);
+
+          tmpAnswer = "";
+          for (int k = 0; k < 5; k++) {
+            if (cloud.docs[i].data()['answer42'] != null && cloud.docs[i].data()['answer42'][k] != null &&
+                cloud.docs[i].data()['answer42'][k] != "") {
+              tmpAnswer += (k+1).toString() + ", ";
+            }
+          }
+          // 제일 마지막 ", " 부분은 자르기
+          if(tmpAnswer != "") {
+            tmpAnswer = tmpAnswer.substring(0, tmpAnswer.length - 2);
+          }
+          row.add(tmpAnswer);
+
+          tmpAnswer = "";
+          for (int k = 0; k < 5; k++) {
+            if (cloud.docs[i].data()['answer43'] != null && cloud.docs[i].data()['answer43'][k] != null &&
+                cloud.docs[i].data()['answer43'][k] != "") {
+              tmpAnswer += (k+1).toString() + ", ";
+            }
+          }
+          // 제일 마지막 ", " 부분은 자르기
+          if(tmpAnswer != "") {
+            tmpAnswer = tmpAnswer.substring(0, tmpAnswer.length - 2);
+          }
+          row.add(tmpAnswer);
+
+          tmpAnswer = "";
+          for (int k = 0; k < 5; k++) {
+            if (cloud.docs[i].data()['answer44'] != null && cloud.docs[i].data()['answer44'][k] != null &&
+                cloud.docs[i].data()['answer44'][k] != "") {
+              tmpAnswer += (k+1).toString() + ", ";
+            }
+          }
+          // 제일 마지막 ", " 부분은 자르기
+          if(tmpAnswer != "") {
+            tmpAnswer = tmpAnswer.substring(0, tmpAnswer.length - 2);
+          }
+          row.add(tmpAnswer);
+
+          tmpAnswer = "";
+          for (int k = 0; k < 5; k++) {
+            if (cloud.docs[i].data()['answer45'] != null && cloud.docs[i].data()['answer45'][k] != null &&
+                cloud.docs[i].data()['answer45'][k] != "") {
+              tmpAnswer += (k+1).toString() + ", ";
+            }
+          }
+          // 제일 마지막 ", " 부분은 자르기
+          if(tmpAnswer != "") {
+            tmpAnswer = tmpAnswer.substring(0, tmpAnswer.length - 2);
+          }
+          row.add(tmpAnswer);
+
+          tmpAnswer = "";
+          for (int k = 0; k < 5; k++) {
+            if (cloud.docs[i].data()['answer46'] != null && cloud.docs[i].data()['answer46'][k] != null &&
+                cloud.docs[i].data()['answer46'][k] != "") {
+              tmpAnswer += (k+1).toString() + ", ";
+            }
+          }
+          // 제일 마지막 ", " 부분은 자르기
+          if(tmpAnswer != "") {
+            tmpAnswer = tmpAnswer.substring(0, tmpAnswer.length - 2);
+          }
+          row.add(tmpAnswer);
+
+          tmpAnswer = "";
+          for (int k = 0; k < 5; k++) {
+            if (cloud.docs[i].data()['answer47'] != null && cloud.docs[i].data()['answer47'][k] != null &&
+                cloud.docs[i].data()['answer47'][k] != "") {
+              tmpAnswer += (k+1).toString() + ", ";
+            }
+          }
+          // 제일 마지막 ", " 부분은 자르기
+          if(tmpAnswer != "") {
+            tmpAnswer = tmpAnswer.substring(0, tmpAnswer.length - 2);
+          }
+          row.add(tmpAnswer);
+
+          tmpAnswer = "";
+          for (int k = 0; k < 5; k++) {
+            if (cloud.docs[i].data()['answer48'] != null && cloud.docs[i].data()['answer48'][k] != null &&
+                cloud.docs[i].data()['answer48'][k] != "") {
+              tmpAnswer += (k+1).toString() + ", ";
+            }
+          }
+          // 제일 마지막 ", " 부분은 자르기
+          if(tmpAnswer != "") {
+            tmpAnswer = tmpAnswer.substring(0, tmpAnswer.length - 2);
+          }
+          row.add(tmpAnswer);
+
+          tmpAnswer = "";
+          for (int k = 0; k < 5; k++) {
+            if (cloud.docs[i].data()['answer49'] != null && cloud.docs[i].data()['answer49'][k] != null &&
+                cloud.docs[i].data()['answer49'][k] != "") {
+              tmpAnswer += (k+1).toString() + ", ";
+            }
+          }
+          // 제일 마지막 ", " 부분은 자르기
+          if(tmpAnswer != "") {
+            tmpAnswer = tmpAnswer.substring(0, tmpAnswer.length - 2);
+          }
+          row.add(tmpAnswer);
+
+          tmpAnswer = "";
+          for (int k = 0; k < 5; k++) {
+            if (cloud.docs[i].data()['answer50'] != null && cloud.docs[i].data()['answer50'][k] != null &&
+                cloud.docs[i].data()['answer50'][k] != "") {
+              tmpAnswer += (k+1).toString() + ", ";
+            }
+          }
+          // 제일 마지막 ", " 부분은 자르기
+          if(tmpAnswer != "") {
+            tmpAnswer = tmpAnswer.substring(0, tmpAnswer.length - 2);
+          }
+          row.add(tmpAnswer);
         }
 
         for(int j = 0; j < summitUserList.length; j++) {
@@ -658,7 +1352,7 @@ class _CourseSubmitPageState extends State<CourseSubmitPage> {
           if(summitUserCount == 0) {
             sheetObject.insertRowIterables(row, i + 1);
           } else {
-            sheetObject.insertRowIterables(row, summitUserCount + i);
+            sheetObject.insertRowIterables(row, summitUserCount + i + 1);
           }
         }
 

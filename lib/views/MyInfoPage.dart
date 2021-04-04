@@ -1,5 +1,4 @@
 // @dart=2.9
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:input_data_to_excel/LoginPage/SignInPageWithUserId.dart';
 import 'package:input_data_to_excel/models/CurrentUser.dart';
 import 'package:input_data_to_excel/views/ExportUserInfoPage.dart';

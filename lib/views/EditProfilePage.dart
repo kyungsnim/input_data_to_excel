@@ -24,7 +24,14 @@ class _EditProfilePageState extends State<EditProfilePage> {
   final _scaffoldGlobalKey = GlobalKey<ScaffoldState>();
   bool loading = false;
   CurrentUser currentUser;
-  final gradeList = ["중학교 1학년", "중학교 2학년","중학교 3학년","고등학교 1학년","고등학교 2학년","고등학교 3학년",];
+  final gradeList = [
+    "중학교 1학년",
+    "중학교 2학년",
+    "중학교 3학년",
+    "고등학교 1학년",
+    "고등학교 2학년",
+    "고등학교 3학년",
+  ];
   var grade; // 학년
   var userId; // 수험번호
   var name; // 이름
@@ -65,8 +72,12 @@ class _EditProfilePageState extends State<EditProfilePage> {
       grade = currentUser.grade;
       userIdController.text = currentUser.id;
       userId = userIdController.text;
-      nameController.text = currentUser.name == "-" ? "" : currentUser.name; // 이름 설정 안한 상태면 비어두고 설정 해두었으면 설정값 불러오기
-      phoneNumberController.text = currentUser.phoneNumber == "-" ? "" : currentUser.phoneNumber; // 휴대폰번호 설정 안한 상태면 비어두고 설정 해두었으면 설정값 불러오기
+      nameController.text = currentUser.name == "-"
+          ? ""
+          : currentUser.name; // 이름 설정 안한 상태면 비어두고 설정 해두었으면 설정값 불러오기
+      phoneNumberController.text = currentUser.phoneNumber == "-"
+          ? ""
+          : currentUser.phoneNumber; // 휴대폰번호 설정 안한 상태면 비어두고 설정 해두었으면 설정값 불러오기
       name = nameController.text;
       phoneNumber = phoneNumberController.text;
     });
@@ -80,247 +91,274 @@ class _EditProfilePageState extends State<EditProfilePage> {
         body: loading
             ? circularProgress()
             : Container(
-          color: Colors.white,
+                color: Colors.white,
                 child: Form(
                   key: _formKey,
                   child: Column(
-              children: [
-                  widget.byAdmin ? Container(
-                    alignment: Alignment.center,
-                    decoration: BoxDecoration(
-                        border: Border.all(color: Colors.blueAccent.withOpacity(0.5)),
-                        borderRadius: BorderRadius.circular(10),
-                        color: Colors.white,
-                        boxShadow: [
-                          BoxShadow(offset: Offset(1, 1), blurRadius: 5, color: Colors.white24)
-                        ]
-                    ),
-                    width: MediaQuery.of(context).size.width * 0.8,
-                    height: MediaQuery.of(context).size.height * 0.07,
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 10),
-                      child: Row(
-                        children: [
-                          Icon(Icons.perm_contact_cal_outlined, color: Colors.blueAccent),
-                          SizedBox(width: 15),
-                          Expanded(
-                            flex: 1,
-                            child: DropdownButton(
-                                hint: Text('학년 선택'),
-                                value: grade,
-                                icon: Icon(Icons.arrow_downward),
-                                underline: Container(
-                                  height: 1,
-                                  color: Colors.white,
-                                ),
-                                items: gradeList.map((value) {
-                                  return DropdownMenuItem(
-                                    value: value,
-                                    child: Text("$value",
-                                        style: GoogleFonts.montserrat(fontSize: 15)),
-                                  );
-                                }).toList(),
-                                onChanged: (value) {
-                                  setState(() {
-                                    grade = value;
-                                  });
-                                }),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ) : Container(),
-                  SizedBox(height: 10),
-                widget.byAdmin ? Container(
-                  alignment: Alignment.center,
-                  decoration: BoxDecoration(
-                      border: Border.all(
-                          color: Colors.blueAccent.withOpacity(0.5)),
-                      borderRadius: BorderRadius.circular(10),
-                      color: Colors.white,
-                      boxShadow: [
-                        BoxShadow(
-                            offset: Offset(1, 1),
-                            blurRadius: 5,
-                            color: Colors.white24)
-                      ]),
-                  width: MediaQuery.of(context).size.width * 0.8,
-                  height: MediaQuery.of(context).size.height * 0.07,
-                  child: Padding(
-                    padding:
-                    const EdgeInsets.symmetric(horizontal: 10),
-                    child: TextFormField(
-                      controller: userIdController,
-                      cursorColor: Colors.blueAccent,
-                      validator: (val) {
-                        if (val.isEmpty) {
-                          return '수험번호를 입력하세요';
-                        } else if (val.length != 6) {
-                          return '수험번호는 6자리여야 합니다.';
-                        } else {
-                          return null;
-                        }
-                      },
-                      decoration: InputDecoration(
-                          border: InputBorder.none,
-                          icon: Icon(Icons.perm_contact_cal,
-                              color: Colors.blueAccent),
-                          hintText: '수험번호',
-                          hintStyle:
-                          GoogleFonts.montserrat(fontSize: 18)),
-                      onChanged: (val) {
-                        userId = val;
-                      },
-                    ),
-                  ),
-                ) : Container(),
-                SizedBox(height: 10),
-                Container(
-                    alignment: Alignment.center,
-                    decoration: BoxDecoration(
-                        border: Border.all(color: Colors.blueAccent.withOpacity(0.5)),
-                        borderRadius: BorderRadius.circular(10),
-                        color: Colors.white,
-                        boxShadow: [
-                          BoxShadow(offset: Offset(1, 1), blurRadius: 5, color: Colors.white24)
-                        ]
-                    ),
-                    width: MediaQuery.of(context).size.width * 0.8,
-                    height: MediaQuery.of(context).size.height * 0.07,
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 10),
-                      child: Row(
-                        children: [
-                          Icon(Icons.person, color: Colors.blueAccent),
-                          SizedBox(width: 15),
-                          Expanded(
-                            flex: 1,
-                            child: TextFormField(
-                              controller: nameController,
-                              cursorColor: Colors.blue,
-                              validator: (val) {
-                                if (val.isEmpty) {
-                                  return '이름을 입력하세요';
-                                } else {
-                                  return null;
-                                }
-                              },
-                              decoration: InputDecoration(
-                                  border: InputBorder.none,
-                                  hintText: '이름',
-                                  hintStyle: GoogleFonts.montserrat(fontSize: 15)),
-                              onChanged: (val) {
-                                name = val;
-                              },
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: 10),
-                  Container(
-                    alignment: Alignment.center,
-                    decoration: BoxDecoration(
-                        border: Border.all(color: Colors.blueAccent.withOpacity(0.5)),
-                        borderRadius: BorderRadius.circular(10),
-                        color: Colors.white,
-                        boxShadow: [
-                          BoxShadow(offset: Offset(1, 1), blurRadius: 5, color: Colors.white24)
-                        ]
-                    ),
-                    width: MediaQuery.of(context).size.width * 0.8,
-                    height: MediaQuery.of(context).size.height * 0.07,
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 10),
-                      child: Row(
-                        children: [
-                          Icon(Icons.phone, color: Colors.blueAccent),
-                          SizedBox(width: 15),
-                          Expanded(
-                            flex: 1,
-                            child: TextFormField(
-                              inputFormatters: [
-                                MultiMaskedTextInputFormatter(
-                                    masks: ['xxx-xxxx-xxxx', 'xxx-xxx-xxxx'], separator: '-')
-                              ],
-                              keyboardType: TextInputType.number,
-                              controller: phoneNumberController,
-                              cursorColor: Colors.blue,
-                              validator: (val) {
-                                if (val.isEmpty) {
-                                  return '휴대폰 번호을 입력하세요';
-                                } else {
-                                  print('changed phoneNumber : $val');
-                                  return null;
-                                }
-                              },
-                              decoration: InputDecoration(
-                                  border: InputBorder.none,
-                                  hintText: '휴대폰번호',
-                                  hintStyle: GoogleFonts.montserrat(fontSize: 15)),
-                              onChanged: (val) {
-                                phoneNumber = val;
-                                // if(phoneNumberController.text.length == 3) {
-                                //   setState(() {
-                                //     phoneNumberController.text = val + '-';
-                                //   });
-                                // }
-                              },
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  Spacer(),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
                     children: [
-                      InkWell(
-                        onTap: () {
-                          checkDeletePopup(currentUser.id);
-                        },
-                        child: Container(
-                          padding: const EdgeInsets.all(16),
-                          child: Text('회원삭제',
-                              style: GoogleFonts.montserrat(
-                                  color: Colors.redAccent, fontSize: 18)),
+                      widget.byAdmin
+                          ? Container(
+                              alignment: Alignment.center,
+                              decoration: BoxDecoration(
+                                  border: Border.all(
+                                      color:
+                                          Colors.blueAccent.withOpacity(0.5)),
+                                  borderRadius: BorderRadius.circular(10),
+                                  color: Colors.white,
+                                  boxShadow: [
+                                    BoxShadow(
+                                        offset: Offset(1, 1),
+                                        blurRadius: 5,
+                                        color: Colors.white24)
+                                  ]),
+                              width: MediaQuery.of(context).size.width * 0.8,
+                              height: MediaQuery.of(context).size.height * 0.07,
+                              child: Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 10),
+                                child: Row(
+                                  children: [
+                                    Icon(Icons.perm_contact_cal_outlined,
+                                        color: Colors.blueAccent),
+                                    SizedBox(width: 15),
+                                    Expanded(
+                                      flex: 1,
+                                      child: DropdownButton(
+                                          hint: Text('학년 선택'),
+                                          value: grade,
+                                          icon: Icon(Icons.arrow_downward),
+                                          underline: Container(
+                                            height: 1,
+                                            color: Colors.white,
+                                          ),
+                                          items: gradeList.map((value) {
+                                            return DropdownMenuItem(
+                                              value: value,
+                                              child: Text("$value",
+                                                  style: GoogleFonts.montserrat(
+                                                      fontSize: 15)),
+                                            );
+                                          }).toList(),
+                                          onChanged: (value) {
+                                            setState(() {
+                                              grade = value;
+                                            });
+                                          }),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            )
+                          : Container(),
+                      SizedBox(height: 10),
+                      widget.byAdmin
+                          ? Container(
+                              alignment: Alignment.center,
+                              decoration: BoxDecoration(
+                                  border: Border.all(
+                                      color:
+                                          Colors.blueAccent.withOpacity(0.5)),
+                                  borderRadius: BorderRadius.circular(10),
+                                  color: Colors.white,
+                                  boxShadow: [
+                                    BoxShadow(
+                                        offset: Offset(1, 1),
+                                        blurRadius: 5,
+                                        color: Colors.white24)
+                                  ]),
+                              width: MediaQuery.of(context).size.width * 0.8,
+                              height: MediaQuery.of(context).size.height * 0.07,
+                              child: Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 10),
+                                child: TextFormField(
+                                  controller: userIdController,
+                                  cursorColor: Colors.blueAccent,
+                                  validator: (val) {
+                                    if (val.isEmpty) {
+                                      return '수험번호를 입력하세요';
+                                    } else if (val.length != 6) {
+                                      return '수험번호는 6자리여야 합니다.';
+                                    } else {
+                                      return null;
+                                    }
+                                  },
+                                  decoration: InputDecoration(
+                                      border: InputBorder.none,
+                                      icon: Icon(Icons.perm_contact_cal,
+                                          color: Colors.blueAccent),
+                                      hintText: '수험번호',
+                                      hintStyle:
+                                          GoogleFonts.montserrat(fontSize: 18)),
+                                  onChanged: (val) {
+                                    userId = val;
+                                  },
+                                ),
+                              ),
+                            )
+                          : Container(),
+                      SizedBox(height: 10),
+                      Container(
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                            border: Border.all(
+                                color: Colors.blueAccent.withOpacity(0.5)),
+                            borderRadius: BorderRadius.circular(10),
+                            color: Colors.white,
+                            boxShadow: [
+                              BoxShadow(
+                                  offset: Offset(1, 1),
+                                  blurRadius: 5,
+                                  color: Colors.white24)
+                            ]),
+                        width: MediaQuery.of(context).size.width * 0.8,
+                        height: MediaQuery.of(context).size.height * 0.07,
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 10),
+                          child: Row(
+                            children: [
+                              Icon(Icons.person, color: Colors.blueAccent),
+                              SizedBox(width: 15),
+                              Expanded(
+                                flex: 1,
+                                child: TextFormField(
+                                  controller: nameController,
+                                  cursorColor: Colors.blue,
+                                  validator: (val) {
+                                    if (val.isEmpty) {
+                                      return '이름을 입력하세요';
+                                    } else {
+                                      return null;
+                                    }
+                                  },
+                                  decoration: InputDecoration(
+                                      border: InputBorder.none,
+                                      hintText: '이름',
+                                      hintStyle:
+                                          GoogleFonts.montserrat(fontSize: 15)),
+                                  onChanged: (val) {
+                                    name = val;
+                                  },
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
-                      InkWell(
-                        onTap: () {
-                          if(_formKey.currentState.validate()) {
-                            updateUserData();
-                            widget.byAdmin ? Navigator.pop(context) : Navigator.pushReplacement(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) =>
-                                        HomePage(1) // ProfilePage
-                                ));
-                          }
-
-                        },
-                        child: Container(
-                          padding: const EdgeInsets.all(16),
-                          child: Text('수정',
-                              style: GoogleFonts.montserrat(
-                                  color: Colors.blueAccent, fontSize: 18)),
+                      SizedBox(height: 10),
+                      Container(
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                            border: Border.all(
+                                color: Colors.blueAccent.withOpacity(0.5)),
+                            borderRadius: BorderRadius.circular(10),
+                            color: Colors.white,
+                            boxShadow: [
+                              BoxShadow(
+                                  offset: Offset(1, 1),
+                                  blurRadius: 5,
+                                  color: Colors.white24)
+                            ]),
+                        width: MediaQuery.of(context).size.width * 0.8,
+                        height: MediaQuery.of(context).size.height * 0.07,
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 10),
+                          child: Row(
+                            children: [
+                              Icon(Icons.phone, color: Colors.blueAccent),
+                              SizedBox(width: 15),
+                              Expanded(
+                                flex: 1,
+                                child: TextFormField(
+                                  inputFormatters: [
+                                    MultiMaskedTextInputFormatter(masks: [
+                                      'xxx-xxxx-xxxx',
+                                      'xxx-xxx-xxxx'
+                                    ], separator: '-')
+                                  ],
+                                  keyboardType: TextInputType.number,
+                                  controller: phoneNumberController,
+                                  cursorColor: Colors.blue,
+                                  validator: (val) {
+                                    if (val.isEmpty) {
+                                      return '휴대폰 번호을 입력하세요';
+                                    } else {
+                                      print('changed phoneNumber : $val');
+                                      return null;
+                                    }
+                                  },
+                                  decoration: InputDecoration(
+                                      border: InputBorder.none,
+                                      hintText: '휴대폰번호',
+                                      hintStyle:
+                                          GoogleFonts.montserrat(fontSize: 15)),
+                                  onChanged: (val) {
+                                    phoneNumber = val;
+                                    // if(phoneNumberController.text.length == 3) {
+                                    //   setState(() {
+                                    //     phoneNumberController.text = val + '-';
+                                    //   });
+                                    // }
+                                  },
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
-                      InkWell(
-                        onTap: () => Navigator.pop(context),
-                        child: Container(
-                          padding: const EdgeInsets.all(16),
-                          child: Text('취소',
-                              style: GoogleFonts.montserrat(
-                                  color: Colors.grey, fontSize: 18)),
-                        ),
-                      ),
+                      Spacer(),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          // 회원삭제 보이도록 변경 ('21.03.21)
+                          widget.byAdmin
+                              ? InkWell(
+                                  onTap: () {
+                                    checkDeletePopup(currentUser.id);
+                                  },
+                                  child: Container(
+                                    padding: const EdgeInsets.all(16),
+                                    child: Text('회원삭제',
+                                        style: GoogleFonts.montserrat(
+                                            color: Colors.redAccent,
+                                            fontSize: 18)),
+                                  ),
+                                )
+                              : Container(),
+                          InkWell(
+                            onTap: () {
+                              if (_formKey.currentState.validate()) {
+                                updateUserData();
+                                widget.byAdmin
+                                    ? Navigator.pop(context)
+                                    : Navigator.pushReplacement(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                HomePage(1) // ProfilePage
+                                            ));
+                              }
+                            },
+                            child: Container(
+                              padding: const EdgeInsets.all(16),
+                              child: Text('수정',
+                                  style: GoogleFonts.montserrat(
+                                      color: Colors.blueAccent, fontSize: 18)),
+                            ),
+                          ),
+                          InkWell(
+                            onTap: () => Navigator.pop(context),
+                            child: Container(
+                              padding: const EdgeInsets.all(16),
+                              child: Text('취소',
+                                  style: GoogleFonts.montserrat(
+                                      color: Colors.grey, fontSize: 18)),
+                            ),
+                          ),
+                        ],
+                      )
                     ],
-                  )
-              ],
-            ),
+                  ),
                 )));
   }
 
@@ -341,9 +379,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                           color: Colors.blueAccent, fontSize: 20)),
                 ),
                 onPressed: () async {
-                  await userReference
-                      .doc(id)
-                      .delete();
+                  await userReference.doc(id).delete();
                   showToast("회원 삭제 완료");
                   Navigator.pop(context); // 회원 삭제 확인 팝업 닫기
                   Navigator.pop(context); // 회원 정보 수정 팝업 닫기
@@ -372,7 +408,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
       'name': name,
       'phoneNumber': phoneNumber
     });
-    if(mounted) {
+    if (mounted) {
       showToast('정보 수정 완료', duration: 2);
     }
   }

@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:input_data_to_excel/res/database.dart';
-import 'package:input_data_to_excel/widgets/JJHBody.dart';
 import 'package:input_data_to_excel/widgets/LoginButton.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -502,7 +501,7 @@ class SignUpPageWithUserIdState extends State<SignUpPageWithUserId> {
                     SizedBox(height: 50),
                     Text('© Copyright ${DateTime.now().year} by 조지형 국어학원',
                         style: TextStyle(color: Colors.white54, fontSize: 12)),
-                    SizedBox(height: 50),
+                    SizedBox(height: 20),
                   ])),
         ]));
   }

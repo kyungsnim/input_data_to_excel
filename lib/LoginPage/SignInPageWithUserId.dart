@@ -266,7 +266,7 @@ class SignInPageWithUserIdState extends State<SignInPageWithUserId> {
                                 style: TextStyle(color: Colors.white, fontSize: 18))
                           ],
                         )),
-                    SizedBox(height: MediaQuery.of(context).size.height * 0.1),
+                    SizedBox(height: MediaQuery.of(context).size.height * 0.07),
                     // Alert Box
                     isLoading == true ? Column(
                       children: [
@@ -316,7 +316,7 @@ class SignInPageWithUserIdState extends State<SignInPageWithUserId> {
               SizedBox(height: 20),
               Text('© Copyright ${DateTime.now().year} by 조지형 국어학원',
                   style: TextStyle(color: Colors.white54, fontSize: 12)),
-              SizedBox(height: 40),
+              SizedBox(height: 20),
             ],
           ),
         ),
