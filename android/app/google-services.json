@@ -14,6 +14,22 @@
       },
       "oauth_client": [
         {
+          "client_id": "382800887435-6l7j5nncnili9qqh08hgb7suffmh7ioj.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.kyungsnim.input_data_to_excel",
+            "certificate_hash": "7bacbec310890157ae0598d22d8c8186c214e2d6"
+          }
+        },
+        {
+          "client_id": "382800887435-g63f676f7nsradahhbe0jcfa6qe88oug.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.kyungsnim.input_data_to_excel",
+            "certificate_hash": "914d0fd233020c01c522285012cd02f927509e04"
+          }
+        },
+        {
           "client_id": "382800887435-ga9jtvks73l8vet9t2stcu00p4cvsd38.apps.googleusercontent.com",
           "client_type": 3
         }
